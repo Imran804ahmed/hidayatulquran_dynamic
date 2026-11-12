@@ -1,5 +1,17 @@
+import os from "node:os";
 import type { NextConfig } from "next";
 import { legacyRedirects } from "./src/config/redirects";
+
+// Build parallelism. By default Next.js spawns (CPU count - 1) workers for "Collecting page data" /
+// static generation, and each worker starts its own native (Rust/Tokio) thread pool. On large
+// shared/containerised build hosts (e.g. 64 reported cores, low pids/thread limit) that exceeds the
+// OS thread limit and the build aborts with "OS can't spawn worker thread ... (os error 11)".
+// Cap the worker count (override with NEXT_BUILD_CPUS) and the per-process Tokio pool size.
+const buildCpus = Math.max(
+  1,
+  Number(process.env.NEXT_BUILD_CPUS) || Math.min(4, Math.max(1, (os.cpus()?.length ?? 2) - 1)),
+);
+process.env.TOKIO_WORKER_THREADS ??= "2";
 
 const nextConfig: NextConfig = {
   // Runs as a Node.js server (`next start`): needed for the admin portal, its sessions and the
@@ -19,6 +31,8 @@ const nextConfig: NextConfig = {
   experimental: {
     // Two root layouts (public site, admin portal) need a single global 404 page.
     globalNotFound: true,
+    // See buildCpus above: keeps the build within thread limits on shared hosts.
+    cpus: buildCpus,
   },
 
   async redirects() {
