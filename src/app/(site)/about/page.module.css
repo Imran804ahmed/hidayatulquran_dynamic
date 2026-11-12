@@ -1,0 +1,306 @@
+/* Styles for src/app/(site)/about/page.tsx. Scoped to the element with
+   className={styles.page}; :where() keeps the original selector specificity. */
+
+:where(.page) :global(.about-hero) {
+  background: linear-gradient(135deg, #082c4c 0%, #0d4a7a 50%, #082c4c 100%);
+  padding: 90px 0 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+:where(.page) :global(.about-hero::before) {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+:where(.page) :global(.about-hero h1) {
+  color: #E1B152;
+  font-size: 2.6rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+:where(.page) :global(.about-hero p) {
+  color: #b8cfe0;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+}
+
+:where(.page) :global(.about-story) {
+  padding: 80px 0;
+  background: #fff;
+}
+
+:where(.page) :global(.about-story .section-label) {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #E1B152;
+  margin-bottom: 8px;
+}
+
+:where(.page) :global(.about-story h2) {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #082c4c;
+  margin-bottom: 16px;
+}
+
+:where(.page) :global(.about-story .lead-text) {
+  font-size: 1.05rem;
+  color: #444;
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+
+:where(.page) :global(.about-story .logo-card) {
+  background: linear-gradient(135deg, #082c4c 0%, #0d4a7a 100%);
+  border-radius: 24px;
+  padding: 50px 30px;
+  text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 40px rgba(8,44,76,0.25);
+}
+
+:where(.page) :global(.about-story .logo-card img) {
+  width: 130px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+}
+
+:where(.page) :global(.about-story .logo-card h3) {
+  color: #E1B152;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+:where(.page) :global(.about-story .logo-card p) {
+  color: #b8cfe0;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+:where(.page) :global(.about-story .logo-card .divider) {
+  width: 50px;
+  height: 3px;
+  background: #E1B152;
+  border-radius: 2px;
+  margin: 14px auto;
+}
+
+:where(.page) :global(.stats-section) {
+  background: linear-gradient(135deg, #082c4c 0%, #0d4a7a 100%);
+  padding: 60px 0;
+}
+
+:where(.page) :global(.stat-item) {
+  text-align: center;
+  padding: 20px 10px;
+}
+
+:where(.page) :global(.stat-item .stat-number) {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #E1B152;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+:where(.page) :global(.stat-item .stat-label) {
+  color: #b8cfe0;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+:where(.page) :global(.stat-divider) {
+  width: 1px;
+  background: rgba(255,255,255,0.15);
+  align-self: stretch;
+}
+
+:where(.page) :global(.why-section) {
+  background: #f4f7fb;
+  padding: 80px 0;
+}
+
+:where(.page) :global(.why-section .section-label) {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #E1B152;
+  margin-bottom: 8px;
+}
+
+:where(.page) :global(.why-section h2) {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #082c4c;
+  margin-bottom: 8px;
+}
+
+:where(.page) :global(.why-section .subtitle) {
+  color: #6c757d;
+  max-width: 520px;
+  margin: 0 auto 50px;
+}
+
+:where(.page) :global(.feature-card) {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 24px;
+  height: 100%;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-bottom: 4px solid transparent;
+}
+
+:where(.page) :global(.feature-card:hover) {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.13);
+  border-bottom-color: #E1B152;
+}
+
+:where(.page) :global(.feature-card .icon-wrap) {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #082c4c, #0d4a7a);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #E1B152;
+  margin-bottom: 18px;
+}
+
+:where(.page) :global(.feature-card h4) {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #082c4c;
+  margin-bottom: 10px;
+}
+
+:where(.page) :global(.feature-card p) {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.7;
+}
+
+:where(.page) :global(.mission-section) {
+  padding: 80px 0;
+  background: #fff;
+}
+
+:where(.page) :global(.mission-card) {
+  background: linear-gradient(135deg, #082c4c 0%, #0d4a7a 100%);
+  border-radius: 24px;
+  padding: 50px 50px;
+  position: relative;
+  overflow: hidden;
+}
+
+:where(.page) :global(.mission-card::before) {
+  content: "\F4CA";
+  font-family: "bootstrap-icons";
+  position: absolute;
+  right: 30px;
+  top: 20px;
+  font-size: 8rem;
+  color: rgba(255,255,255,0.05);
+  line-height: 1;
+}
+
+:where(.page) :global(.mission-card .section-label) {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #E1B152;
+  margin-bottom: 10px;
+}
+
+:where(.page) :global(.mission-card h2) {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+:where(.page) :global(.mission-card p) {
+  color: #b8cfe0;
+  font-size: 1rem;
+  line-height: 1.85;
+  margin: 0;
+  max-width: 700px;
+}
+
+:where(.page) :global(.mission-card .mission-values) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+:where(.page) :global(.mission-card .mission-values span) {
+  background: rgba(225,177,82,0.15);
+  border: 1px solid rgba(225,177,82,0.35);
+  color: #E1B152;
+  border-radius: 30px;
+  padding: 6px 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+:where(.page) :global(.cta-strip) {
+  background: linear-gradient(135deg, #082c4c 0%, #0d4a7a 100%);
+  padding: 60px 0;
+  text-align: center;
+}
+
+:where(.page) :global(.cta-strip h2) {
+  color: #E1B152;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+:where(.page) :global(.cta-strip p) {
+  color: #b8cfe0;
+  font-size: 1rem;
+  margin-bottom: 28px;
+}
+
+:where(.page) :global(.btn-wa) {
+  background: #25d366;
+  color: #fff;
+  font-weight: 600;
+  padding: 13px 32px;
+  border-radius: 50px;
+  font-size: 1rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.35);
+}
+
+:where(.page) :global(.btn-wa:hover) {
+  background: #1da851;
+  transform: translateY(-2px);
+  color: #fff;
+}

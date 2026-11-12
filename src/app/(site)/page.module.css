@@ -1,0 +1,161 @@
+/* Styles for src/app/(site)/page.tsx. Scoped to the element with
+   className={styles.page}; :where() keeps the original selector specificity. */
+
+:where(.page) :global(.plan-card) {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  background-color: #e74c3c;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+:where(.page) :global(.plan-card:hover) {
+  transform: translateY(-10px);
+}
+
+:where(.page) :global(.plan-title) {
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+:where(.page) :global(.plan-price) {
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+}
+
+:where(.page) :global(.plan-card p) {
+  color: #555;
+  margin-bottom: 10px;
+}
+
+:where(.page) :global(.btn-register) {
+  background-color: #f39c12;
+  border-radius: 50px;
+  padding: 12px 20px;
+  border: none;
+  color: white;
+  font-weight: bold;
+  margin-top: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+:where(.page) :global(.btn-register:hover) {
+  background-color: #e67e22;
+}
+
+@media (max-width: 767px) {
+  :where(.page) :global(.values .row) {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  :where(.page) :global(.values .col-12) {
+    margin-bottom: 20px;
+  }
+
+}
+
+:where(.page) :global(.country-button) {
+  background-color: #f0f0f0;
+  border: 0px solid #ccc;
+  padding: 10px 20px;
+  margin: 0 10px;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 5px;
+  width: 150px;
+  display: inline-block;
+}
+
+:where(.page) :global(.country-button:hover) {
+  background-color: #e8bc76;
+  color: #fff;
+  text-decoration: none;
+}
+
+:where(.page) :global(.country-button.active) {
+  background-color: #f39c12;
+  color: #fff;
+}
+
+:where(.page) :global(.plan-card) {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  text-align: center;
+  padding: 20px;
+}
+
+:where(.page) :global(.plan-title) {
+  font-family: var(--font-croissant-one), sans-serif;
+  color: #fff;
+}
+
+:where(.page) :global(.plan-price) {
+  font-size: 55px;
+  font-family: var(--font-croissant-one), sans-serif;
+}
+
+:where(.page) :global(.btn-register) {
+  background-color: #f39c12;
+  padding: 10px 20px;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+  :where(.page) :global(.country-button) {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  :where(.page) :global(.country-button.active) {
+    background-color: #f39c12;
+  }
+
+  :where(.page) :global(.row.mb-5) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  :where(.page) :global(.country-button) {
+    margin: 5px 0;
+  }
+
+  :where(.page) :global(.plan-card) {
+    margin: 10px 0;
+  }
+
+  :where(.page) :global(.plan-price) {
+    font-size: 40px;
+  }
+
+}
+
+@media (max-width: 768px) {
+  :where(.page) :global(.plan-price) {
+    font-size: 35px;
+  }
+
+  :where(.page) :global(.plan-card) {
+    padding: 15px;
+  }
+
+}
+
+@media (max-width: 576px) {
+  :where(.page) :global(.plan-price) {
+    font-size: 30px;
+  }
+
+  :where(.page) :global(.plan-card) {
+    padding: 10px;
+  }
+
+}

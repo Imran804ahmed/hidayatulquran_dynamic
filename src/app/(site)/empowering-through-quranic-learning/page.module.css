@@ -1,0 +1,94 @@
+/* Styles for src/app/(site)/empowering-through-quranic-learning/page.tsx. Scoped to the element with
+   className={styles.page}; :where() keeps the original selector specificity. */
+
+:where(.page) :global(.emp-card) {
+  background: #fff;
+  border-radius: 16px;
+  padding: 36px 28px;
+  box-shadow: 0 6px 30px rgba(8, 44, 76, 0.09);
+  border-top: 5px solid #E1B152;
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+:where(.page) :global(.emp-card:hover) {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 45px rgba(8, 44, 76, 0.15);
+}
+
+:where(.page) :global(.emp-card-icon) {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #082c4c 0%, #0a3d1e 100%);
+  color: #E1B152;
+  font-size: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 18px rgba(8, 44, 76, 0.25);
+  flex-shrink: 0;
+}
+
+:where(.page) :global(.emp-card h3) {
+  color: #082c4c;
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+:where(.page) :global(.emp-card p) {
+  color: #555;
+  font-size: 15.5px;
+  line-height: 1.8;
+  margin: 0;
+}
+
+:where(.page) :global(.emp-why-item) {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 24px 0;
+  border-bottom: 1px solid #eee;
+}
+
+:where(.page) :global(.emp-why-item:last-child) {
+  border-bottom: none;
+}
+
+:where(.page) :global(.emp-why-num) {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E1B152 0%, #c9822a 100%);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(225, 177, 82, 0.4);
+}
+
+:where(.page) :global(.emp-why-item h4) {
+  color: #082c4c;
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+:where(.page) :global(.emp-why-item p) {
+  color: #555;
+  font-size: 15px;
+  margin: 0;
+  line-height: 1.75;
+}
+
+@media (max-width: 767px) {
+  :where(.page) :global(.emp-card) {
+    margin-bottom: 24px;
+  }
+
+}

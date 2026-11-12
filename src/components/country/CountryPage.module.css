@@ -1,0 +1,112 @@
+/* Country landing pages. Selectors stay at least as specific as the template rules they override
+   (`.about h2`, `.about h3`, `.about p`); this file loads after the site stylesheet.
+   Note: site.css styles .btn-register with !important (green pill button), which wins here as before. */
+
+.breadcrumbs {
+  margin-top: 70px;
+}
+
+.detail {
+  padding: 50px 0;
+}
+
+.detail h2 {
+  color: #082c4c;
+}
+
+.detail p {
+  font-size: 17px;
+  color: #444;
+}
+
+.detail p.lead {
+  margin-top: 15px;
+}
+
+.detail p.contact {
+  font-size: 16px;
+}
+
+.contact :global(.bi) {
+  color: #082c4c;
+}
+
+.detail ul {
+  font-size: 17px;
+  margin-top: 15px;
+  line-height: 2.2;
+  color: #444;
+}
+
+.detail ul a {
+  color: #082c4c;
+}
+
+.image {
+  border-radius: 12px;
+  width: 100%;
+}
+
+.trialIcon {
+  font-size: 20px;
+}
+
+.detail h2.feeHeading {
+  margin-bottom: 30px;
+}
+
+.detail h2.faqHeading {
+  margin-bottom: 25px;
+}
+
+/* Package cards */
+.package {
+  text-align: center;
+  padding: 30px 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.package.featured {
+  border: 2px solid #f39c12;
+  background: #fffdf7;
+}
+
+.package h3 {
+  color: #082c4c;
+}
+
+.detail .package p.days {
+  font-size: 13px;
+  color: #888;
+}
+
+.detail .package p.price {
+  font-size: 42px;
+  font-weight: bold;
+  color: #f39c12;
+}
+
+.price span {
+  font-size: 16px;
+  color: #555;
+}
+
+.detail .package ul.features {
+  list-style: none;
+  padding: 0;
+  margin-top: 0;
+  color: #555;
+  font-size: 15px;
+  line-height: 2;
+}
+
+.register {
+  background-color: #f39c12;
+  color: #fff;
+  padding: 10px 25px;
+  border-radius: 5px;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 10px;
+}

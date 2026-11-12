@@ -1,0 +1,46 @@
+{
+  "name": "hidayatulquran",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "build:standalone": "node scripts/build-standalone.mjs",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "portal": "node scripts/portal.mjs",
+    "db:migrate": "node scripts/portal.mjs migrate",
+    "db:backup": "node scripts/portal.mjs backup",
+    "test": "node --test tests/portal/portal.test.mjs",
+    "test:portal": "node --test tests/portal/portal.test.mjs",
+    "package:hostinger": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-hostinger.ps1",
+    "images:sizes": "node scripts/generate-image-sizes.mjs",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@popperjs/core": "2.9.2",
+    "@types/node": "26.6.6",
+    "@types/nodemailer": "8.0.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "aos": "2.3.4",
+    "bootstrap": "5.0.1",
+    "bootstrap-icons": "1.5.0",
+    "mysql2": "3.24.5",
+    "next": "16.4.6",
+    "nodemailer": "10.2.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remixicon": "2.5.0",
+    "swiper": "6.7.0",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "description": "Hidayatul Quran Academy website and admin portal (Next.js + Node.js)",
+  "devDependencies": {
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.6"
+  }
+}

@@ -1,0 +1,144 @@
+/* Styles for src/app/(site)/enrollment-process/page.tsx. Scoped to the element with
+   className={styles.page}; :where() keeps the original selector specificity. */
+
+:where(.page) :global(.ep-step-card) {
+  background: #fff;
+  border-radius: 16px;
+  padding: 36px 30px;
+  box-shadow: 0 6px 30px rgba(8, 44, 76, 0.09);
+  border-top: 5px solid #E1B152;
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+:where(.page) :global(.ep-step-card:hover) {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 45px rgba(8, 44, 76, 0.15);
+}
+
+:where(.page) :global(.ep-step-number) {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E1B152 0%, #c9822a 100%);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  box-shadow: 0 6px 18px rgba(225, 177, 82, 0.45);
+}
+
+:where(.page) :global(.ep-step-card h3) {
+  color: #082c4c;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+:where(.page) :global(.ep-step-card p) {
+  color: #555;
+  font-size: 15.5px;
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+
+:where(.page) :global(.ep-step-card ul) {
+  padding-left: 0;
+  list-style: none;
+  margin: 0;
+}
+
+:where(.page) :global(.ep-step-card ul li) {
+  color: #444;
+  font-size: 15px;
+  padding: 6px 0;
+  border-bottom: 1px dashed #e8e8e8;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+:where(.page) :global(.ep-step-card ul li:last-child) {
+  border-bottom: none;
+}
+
+:where(.page) :global(.ep-step-card ul li i) {
+  color: #25D366;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+:where(.page) :global(.ep-connector) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 28px;
+}
+
+:where(.page) :global(.ep-connector i) {
+  font-size: 30px;
+  color: #E1B152;
+}
+
+:where(.page) :global(.ep-highlight-box) {
+  background: linear-gradient(135deg, #082c4c 0%, #0a3d1e 100%);
+  border-radius: 20px;
+  padding: 48px 36px;
+  color: #fff;
+  text-align: center;
+}
+
+:where(.page) :global(.ep-highlight-box h2) {
+  color: #E1B152;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+:where(.page) :global(.ep-highlight-box p) {
+  color: rgba(255,255,255,0.85);
+  font-size: 16px;
+  max-width: 620px;
+  margin: 0 auto 28px;
+}
+
+:where(.page) :global(.ep-faq-item) {
+  background: #fff;
+  border-radius: 12px;
+  padding: 22px 26px;
+  margin-bottom: 16px;
+  box-shadow: 0 3px 16px rgba(8, 44, 76, 0.07);
+  border-left: 4px solid #E1B152;
+}
+
+:where(.page) :global(.ep-faq-item h4) {
+  color: #082c4c;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+:where(.page) :global(.ep-faq-item p) {
+  color: #555;
+  font-size: 15px;
+  margin: 0;
+  line-height: 1.7;
+}
+
+@media (max-width: 767px) {
+  :where(.page) :global(.ep-connector) {
+    display: none;
+  }
+
+  :where(.page) :global(.ep-step-card) {
+    margin-bottom: 24px;
+  }
+
+  :where(.page) :global(.ep-highlight-box) {
+    padding: 32px 20px;
+  }
+
+}

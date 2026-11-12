@@ -1,0 +1,13 @@
+/* Styles for src/app/(site)/registration/page.tsx. Scoped to the element with
+   className={styles.page}; :where() keeps the original selector specificity. */
+
+:where(.page) :global(.reply-form label) {
+  transition: all 0.3s ease;
+  font-size: 14px;
+  color: #012970;
+}
+
+:where(.page) :global(.reply-form label:hover) {
+  color: #012970;
+  font-size: 15px;
+}

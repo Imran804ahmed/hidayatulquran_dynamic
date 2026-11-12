@@ -1,0 +1,39 @@
+/* Course landing pages. Selectors are kept at least as specific as the template rules they
+   override (e.g. `.about h2`, `.about p`), and this file loads after the site stylesheet. */
+
+.breadcrumbs {
+  margin-top: 70px;
+}
+
+.detail {
+  padding: 50px 0;
+}
+
+.detail h2 {
+  color: #082c4c;
+}
+
+.detail p {
+  font-size: 17px;
+  color: #444;
+}
+
+.detail p.lead {
+  margin-top: 15px;
+}
+
+.detail ul {
+  font-size: 17px;
+  margin-top: 15px;
+  line-height: 2.2;
+  color: #444;
+}
+
+.image {
+  border-radius: 12px;
+  width: 100%;
+}
+
+.trialIcon {
+  font-size: 20px;
+}

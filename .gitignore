@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# admin portal
+.env
+.env*.local
+backups/
+
+# deployment packages
+deploy/
+
+# local Claude Code settings
+.claude/settings.local.json
