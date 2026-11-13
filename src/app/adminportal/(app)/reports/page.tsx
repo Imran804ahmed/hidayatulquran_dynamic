@@ -64,11 +64,11 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
   return (
     <>
       <PageHeader eyebrow="Administration" title="Reports" subtitle="Live figures from the portal database. Each bar links to the matching filtered list; exports respect your permissions." />
-      <form className="card filters mb-4" method="get" action={`${P}/reports`} style={{ borderRadius: "var(--radius)" }}>
+      <form className="card filters filters-standalone mb-4" method="get" action={`${P}/reports`} aria-label="Report date range">
         <div className="field"><label htmlFor="from">Submissions from</label><input className="input" id="from" name="from" type="date" defaultValue={from} max={today} /></div>
-        <div className="field"><label htmlFor="to">to</label><input className="input" id="to" name="to" type="date" defaultValue={to} max={today} /></div>
+        <div className="field"><label htmlFor="to">Submissions to</label><input className="input" id="to" name="to" type="date" defaultValue={to} max={today} /></div>
         <div className="filter-actions"><button className="btn btn-secondary" type="submit"><Icon name="funnel" /> Apply</button></div>
-        <p className="hint" style={{ alignSelf: "center" }}>The date range applies to registration and enquiry figures ({tz}). Imported rows without an original date count as their import date.</p>
+        <p className="hint filter-note">The date range applies to registration and enquiry figures ({tz}). Imported rows without an original date count as their import date.</p>
       </form>
       <div className="grid grid-2">
         {can(user, "students.view") && (

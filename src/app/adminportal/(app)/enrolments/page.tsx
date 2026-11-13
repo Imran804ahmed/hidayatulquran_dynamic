@@ -7,8 +7,8 @@ import { ENROL_STATUS, packageName } from "@/lib/portal/lookups";
 import { enrolmentWhere } from "@/lib/portal/enrolments";
 import { activeCourses, teacherOptions } from "@/lib/portal/students";
 import { fmtDate } from "@/lib/portal/time";
-import { Badge, EmptyState, Icon, PageHeader, Pagination, hrefWith, paginate, type Params } from "@/components/portal/ui";
-import { AutoSubmit, RememberList, ScrollMemory } from "@/components/portal/shell";
+import { ActiveFilters, Badge, EmptyState, Icon, PageHeader, Pagination, hrefWith, paginate, type ActiveFilter, type Params } from "@/components/portal/ui";
+import { AutoSubmit, MoreFilters, RememberList, ScrollMemory } from "@/components/portal/shell";
 
 export const metadata: Metadata = { title: "Enrolments" };
 const BASE = `${PORTAL}/enrolments`;
@@ -28,6 +28,15 @@ export default async function EnrolmentsPage({ searchParams }: { searchParams: P
   const [courses, teachers] = await Promise.all([activeCourses(), teacherOptions(true)]);
   const params: Params = { ...f, status: sp.status };
   const filtered = Boolean(f.q || f.course || f.teacher || (sp.status && sp.status !== "live"));
+  const without = (key: string) => hrefWith(BASE, params, { [key]: undefined, page: undefined });
+  const chip = (label: string, value: string | undefined, key: string): ActiveFilter[] => (value ? [{ label, value, removeHref: without(key) }] : []);
+  const chips = [
+    ...chip("Student", f.q && `“${f.q}”`, "q"),
+    ...chip("Status", f.status !== "live" ? (f.status === "all" ? "All" : (ENROL_STATUS as Record<string, string>)[f.status] ?? f.status) : undefined, "status"),
+    ...chip("Course", f.course && (courses.find((c) => String(c.id) === f.course)?.name ?? f.course), "course"),
+    ...chip("Teacher", f.teacher && (f.teacher === "none" ? "Not assigned" : teachers.find((t) => String(t.id) === f.teacher)?.full_name ?? f.teacher), "teacher"),
+  ];
+  const moreActive = chips.length - (f.q ? 1 : 0);
   return (
     <>
       <Suspense fallback={null}><RememberList module="enrolments" /><ScrollMemory /></Suspense>
@@ -40,21 +49,26 @@ export default async function EnrolmentsPage({ searchParams }: { searchParams: P
         <form className="filters" method="get" action={BASE} role="search" aria-label="Filter enrolments">
           <AutoSubmit>
             <div className="field field-search"><label htmlFor="q">Student</label><input className="input" id="q" name="q" type="search" defaultValue={f.q} placeholder="Name or ref" /></div>
+            <MoreFilters active={moreActive}>
             <div className="field"><label htmlFor="status">Enrolment status</label><select className="input" id="status" name="status" defaultValue={f.status}><option value="live">Current (pending, active, paused)</option>{Object.entries(ENROL_STATUS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}<option value="all">All</option></select></div>
             <div className="field"><label htmlFor="course">Course</label><select className="input" id="course" name="course" defaultValue={f.course ?? ""}><option value="">Any course</option>{courses.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
             <div className="field"><label htmlFor="teacher">Teacher</label><select className="input" id="teacher" name="teacher" defaultValue={f.teacher ?? ""}><option value="">Any teacher</option><option value="none">Not assigned</option>{teachers.map((t) => <option key={t.id} value={t.id}>{t.full_name}</option>)}</select></div>
+            </MoreFilters>
           </AutoSubmit>
-          <div className="filter-actions"><button className="btn btn-secondary" type="submit"><Icon name="funnel" /> Apply</button>{filtered && <Link className="btn btn-ghost" href={BASE}>Clear</Link>}</div>
+          <div className="filter-actions"><button className="btn btn-secondary" type="submit"><Icon name="funnel" /> Apply</button>{filtered && <Link className="btn btn-ghost" href={BASE}>Clear filters</Link>}</div>
         </form>
-        {rows.length === 0 ? <EmptyState icon="journal-check" title={filtered ? "No enrolments match" : "No current enrolments"} text={filtered ? "Try different filters." : "Enrol a student from their record, or convert an approved registration."} /> : (
+        <ActiveFilters total={total} noun={["enrolment", "enrolments"]} filters={chips} clearHref={BASE} />
+        {rows.length === 0 ? <EmptyState icon="journal-check" title={filtered ? "No enrolments match" : "No current enrolments"}
+          text={filtered ? "Nothing matches these filters. Remove a filter or clear them all." : "Enrol a student from their record, or convert an approved registration."}
+          action={filtered ? <Link className="btn btn-secondary" href={BASE}>Clear filters</Link> : can(user, "enrolments.manage") ? <Link className="btn btn-primary" href={`${BASE}/new`}><Icon name="plus-lg" /> New enrolment</Link> : undefined} /> : (
           <div className="table-wrap"><table className="table responsive">
             <caption className="sr-only">Enrolments, {total} results</caption>
             <thead><tr><th scope="col">Student</th><th scope="col">Course</th><th scope="col">Teacher</th><th scope="col">Package</th><th scope="col">Start</th><th scope="col" className="num">Weekly classes</th><th scope="col">Status</th></tr></thead>
             <tbody>{rows.map((r) => (
               <tr key={r.id}>
-                <td className="cell-primary"><Link className="row-link" href={`${BASE}/${r.id}`}>{r.student_name}</Link> <span className="mono muted small">{r.student_ref}</span>{r.student_status !== "active" && <span className="pill pill-warn" style={{ marginLeft: 6 }}>Student {r.student_status}</span>}</td>
+                <td className="cell-primary"><Link className="row-link" href={`${BASE}/${r.id}`}>{r.student_name}</Link> <span className="mono muted small">{r.student_ref}</span>{r.student_status !== "active" && <span className="pill pill-warn ml-2">Student {r.student_status}</span>}</td>
                 <td data-label="Course">{r.course_name}</td>
-                <td data-label="Teacher">{r.teacher_name ? <>{r.teacher_name}{r.teacher_status !== "active" && <span className="pill pill-warn" style={{ marginLeft: 6 }}>{r.teacher_status}</span>}</> : <span className="muted">Not assigned</span>}</td>
+                <td data-label="Teacher">{r.teacher_name ? <>{r.teacher_name}{r.teacher_status !== "active" && <span className="pill pill-warn ml-2">Teacher {r.teacher_status}</span>}</> : <span className="muted">Not assigned</span>}</td>
                 <td data-label="Package" className="small">{packageName(r.package) || "—"}</td>
                 <td data-label="Start">{r.start_date ? fmtDate(r.start_date) : "—"}</td>
                 <td data-label="Weekly classes" className="num">{r.slots}</td>

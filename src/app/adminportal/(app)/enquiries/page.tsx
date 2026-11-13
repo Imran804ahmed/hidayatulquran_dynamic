@@ -8,8 +8,10 @@ import { fmtDateTime, localYmd, relativeTime } from "@/lib/portal/time";
 import { ENQ_OPEN, ENQ_STATUS } from "@/lib/portal/lookups";
 import { ENQ_SORTS, enquiryWhere } from "@/lib/portal/enquiries";
 import { orderBy } from "@/lib/portal/students";
-import { Badge, EmptyState, FollowUp, Icon, PageHeader, Pagination, SortHeader, hrefWith, paginate, type Params } from "@/components/portal/ui";
-import { AutoSubmit, RememberList, ScrollMemory } from "@/components/portal/shell";
+import { ActiveFilters, Badge, EmptyState, FollowUp, Icon, PageHeader, Pagination, SortHeader, hrefWith, paginate, type ActiveFilter, type Params } from "@/components/portal/ui";
+import { AutoSubmit, MoreFilters, RememberList, ScrollMemory } from "@/components/portal/shell";
+
+const FOLLOWUP: Record<string, string> = { overdue: "Overdue", today: "Due today", week: "Next 7 days" };
 
 export const metadata: Metadata = { title: "Enquiries" };
 const BASE = `${PORTAL}/enquiries`;
@@ -34,6 +36,18 @@ export default async function EnquiriesPage({ searchParams }: { searchParams: Pr
   const sortProps = { base: BASE, params, sort: order.sort, dir: order.dir };
   const tab = (status: string) => hrefWith(BASE, { ...params, status, page: undefined, unread: undefined });
   const filtered = Boolean(f.q || f.unread || f.followup || f.assigned || f.from || f.to);
+  const without = (key: string) => hrefWith(BASE, params, { [key]: undefined, page: undefined });
+  const chip = (label: string, value: string | undefined, key: string): ActiveFilter[] => (value ? [{ label, value, removeHref: without(key) }] : []);
+  const assignedLabel = f.assigned === "me" ? "Me" : f.assigned === "unassigned" ? "Unassigned" : users.find((u) => String(u.id) === f.assigned)?.name ?? f.assigned;
+  const chips = [
+    ...chip("Search", f.q && `“${f.q}”`, "q"),
+    ...chip("Read state", f.unread && "Unread only", "unread"),
+    ...chip("Follow-up", f.followup && (FOLLOWUP[f.followup] ?? f.followup), "followup"),
+    ...chip("Assigned to", f.assigned && assignedLabel, "assigned"),
+    ...chip("From", f.from, "from"),
+    ...chip("To", f.to, "to"),
+  ];
+  const moreActive = chips.length - (f.q ? 1 : 0);
   return (
     <>
       <Suspense fallback={null}><RememberList module="enquiries" /><ScrollMemory /></Suspense>
@@ -52,17 +66,21 @@ export default async function EnquiriesPage({ searchParams }: { searchParams: Pr
           <input type="hidden" name="status" value={f.status} />
           <AutoSubmit>
             <div className="field field-search"><label htmlFor="q">Search</label><input className="input" id="q" name="q" type="search" defaultValue={f.q} placeholder="Name, ref, email, subject or message" /></div>
+            <MoreFilters active={moreActive}>
             <div className="field"><label htmlFor="unread">Read state</label><select className="input" id="unread" name="unread" defaultValue={f.unread ?? ""}><option value="">Any</option><option value="1">Unread only</option></select></div>
             <div className="field"><label htmlFor="followup">Follow-up</label><select className="input" id="followup" name="followup" defaultValue={f.followup ?? ""}><option value="">Any</option><option value="overdue">Overdue</option><option value="today">Due today</option><option value="week">Next 7 days</option></select></div>
             <div className="field"><label htmlFor="assigned">Assigned to</label><select className="input" id="assigned" name="assigned" defaultValue={f.assigned ?? ""}><option value="">Anyone</option><option value="me">Me</option><option value="unassigned">Unassigned</option>{users.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}</select></div>
             <div className="field"><label htmlFor="from">From</label><input className="input" id="from" name="from" type="date" defaultValue={f.from} /></div>
             <div className="field"><label htmlFor="to">To</label><input className="input" id="to" name="to" type="date" defaultValue={f.to} /></div>
+            </MoreFilters>
           </AutoSubmit>
-          <div className="filter-actions"><button className="btn btn-secondary" type="submit"><Icon name="funnel" /> Apply</button>{filtered && <Link className="btn btn-ghost" href={tab(f.status)}>Clear</Link>}</div>
+          <div className="filter-actions"><button className="btn btn-secondary" type="submit"><Icon name="funnel" /> Apply</button>{filtered && <Link className="btn btn-ghost" href={tab(f.status)}>Clear filters</Link>}</div>
         </form>
+        <ActiveFilters total={total} noun={["enquiry", "enquiries"]} filters={chips} clearHref={tab(f.status)} />
         {rows.length === 0 ? (
           filtered || f.status !== "open"
-            ? <EmptyState icon="search" title="No enquiries match" text="Nothing matches this status and these filters." action={<Link className="btn btn-secondary" href={BASE}>Show unresolved</Link>} />
+            ? <EmptyState icon="search" title="No enquiries match" text={filtered ? "Nothing matches this status and these filters. Remove a filter or clear them all." : "There are no enquiries with this status."}
+                action={<Link className="btn btn-secondary" href={filtered ? tab(f.status) : BASE}>{filtered ? "Clear filters" : "Show unresolved"}</Link>} />
             : <EmptyState icon="envelope-open" title="No unresolved enquiries" text="New messages from the website contact form will appear here." />
         ) : (
           <div className="table-wrap">
@@ -79,9 +97,9 @@ export default async function EnquiriesPage({ searchParams }: { searchParams: Pr
               <tbody>
                 {rows.map((r) => (
                   <tr key={r.id} className={!r.read_at ? "is-unread" : undefined}>
-                    <td className="cell-primary">{!r.read_at && <span className="unread-dot" title="Unread" />}<span className="sr-only">{!r.read_at ? "Unread. " : ""}</span>
+                    <td className="cell-primary">{!r.read_at && <span className="unread-dot" title="Unread" aria-hidden="true" />}<span className="sr-only">{!r.read_at ? "Unread. " : ""}</span>
                       <Link className="row-link" href={`${BASE}/${r.id}`}>{r.full_name}</Link><div className="person-sub">{r.email}</div></td>
-                    <td data-label="Subject"><div className={!r.read_at ? "" : "muted"} style={{ fontWeight: r.read_at ? 400 : 700 }}>{r.subject}</div><div className="small muted">{(r.message ?? "").slice(0, 90)}{(r.message ?? "").length > 90 ? "…" : ""}</div></td>
+                    <td data-label="Subject"><div className={!r.read_at ? "fw-bold" : "muted"}>{r.subject || <span className="muted">No subject</span>}</div><div className="small muted">{(r.message ?? "").slice(0, 90)}{(r.message ?? "").length > 90 ? "…" : ""}</div></td>
                     <td data-label="Received" className="nowrap" title={fmtDateTime(r.submitted_at, tz)}>{r.submitted_at_known ? relativeTime(r.submitted_at, tz) : <span className="muted">Imported</span>}</td>
                     <td data-label="Assigned" className="small">{r.assignee ?? <span className="muted">—</span>}</td>
                     <td data-label="Follow-up"><FollowUp date={r.follow_up_on} open={ENQ_OPEN.includes(r.status as never)} today={today} /></td>

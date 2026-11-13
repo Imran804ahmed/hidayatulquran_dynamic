@@ -37,8 +37,8 @@ function ModeChooser({ candidates }: { candidates: Candidate[] }) {
   const [mode, setMode] = useState(initialMode);
   const linkable = candidates.filter((c) => c.status !== "archived");
   return (
-    <fieldset className="field" style={{ border: 0, padding: 0 }}>
-      <legend className="label" style={{ marginBottom: 8 }}>Student record<span className="req" aria-hidden="true">*</span></legend>
+    <fieldset className="field fieldset-plain">
+      <legend className="label">Student record<span className="req" aria-hidden="true">*</span></legend>
       <label className="radio-card">
         <input type="radio" name="mode" value="new" defaultChecked={initialMode === "new"} onChange={() => setMode("new")} />
         <span><strong>Create a new student</strong><br /><span className="small muted">Copies the name, age, guardian, contact details, country and preferences from the registration.</span></span>

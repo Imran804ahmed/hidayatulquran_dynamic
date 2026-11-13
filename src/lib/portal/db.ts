@@ -12,7 +12,7 @@ type Executor = Pool | PoolConnection;
 export type Row = Record<string, unknown>;
 export type Param = string | number | null | boolean | Date;
 
-const globalForDb = globalThis as unknown as { hqPool?: Pool };
+const globalForDb = globalThis as unknown as { hqPool?: Pool; hqPoolKey?: string };
 
 function required(name: string): string {
   const v = process.env[name];
@@ -21,7 +21,15 @@ function required(name: string): string {
 }
 
 export function pool(): Pool {
+  // Rebuild the pool when DB_* settings change (e.g. .env.local edited while `next dev` is running);
+  // otherwise the cached pool keeps pointing at the old server.
+  const key = ["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD"].map((k) => process.env[k] ?? "").join("\u0000");
+  if (globalForDb.hqPool && globalForDb.hqPoolKey !== key) {
+    globalForDb.hqPool.end().catch(() => {});
+    globalForDb.hqPool = undefined;
+  }
   if (!globalForDb.hqPool) {
+    globalForDb.hqPoolKey = key;
     globalForDb.hqPool = mysql.createPool({
       host: process.env.DB_HOST ?? "localhost",
       port: Number(process.env.DB_PORT ?? 3306),

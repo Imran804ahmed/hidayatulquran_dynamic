@@ -5,8 +5,10 @@ import { PORTAL, can, requirePage } from "@/lib/portal/auth";
 import * as db from "@/lib/portal/db";
 import { activeCourses, orderBy } from "@/lib/portal/students";
 import { TEACHER_SORTS, teacherWhere } from "@/lib/portal/teachers";
-import { Avatar, Badge, EmptyState, Icon, PageHeader, Pagination, SortHeader, hrefWith, paginate, type Params } from "@/components/portal/ui";
-import { AutoSubmit, RememberList, ScrollMemory } from "@/components/portal/shell";
+import { ActiveFilters, Avatar, Badge, EmptyState, Icon, PageHeader, Pagination, SortHeader, hrefWith, paginate, type ActiveFilter, type Params } from "@/components/portal/ui";
+import { AutoSubmit, MoreFilters, RememberList, ScrollMemory } from "@/components/portal/shell";
+
+const STATUS: Record<string, string> = { active: "Active", inactive: "Inactive", archived: "Archived", all: "All" };
 
 export const metadata: Metadata = { title: "Teachers" };
 const BASE = `${PORTAL}/teachers`;
@@ -30,6 +32,14 @@ export default async function TeachersPage({ searchParams }: { searchParams: Pro
   const params: Params = { q: f.q, status: sp.status, course: f.course, sort: sp.sort, dir: sp.dir };
   const filtered = Boolean(f.q || (sp.status && sp.status !== "current") || f.course);
   const sortProps = { base: BASE, params, sort: order.sort, dir: order.dir };
+  const without = (key: string) => hrefWith(BASE, params, { [key]: undefined, page: undefined });
+  const chip = (label: string, value: string | undefined, key: string): ActiveFilter[] => (value ? [{ label, value, removeHref: without(key) }] : []);
+  const chips = [
+    ...chip("Search", f.q && `“${f.q}”`, "q"),
+    ...chip("Status", f.status !== "current" ? STATUS[f.status] ?? f.status : undefined, "status"),
+    ...chip("Teaches", f.course && (courses.find((c) => String(c.id) === f.course)?.name ?? f.course), "course"),
+  ];
+  const moreActive = chips.length - (f.q ? 1 : 0);
   return (
     <>
       <Suspense fallback={null}><RememberList module="teachers" /><ScrollMemory /></Suspense>
@@ -42,13 +52,16 @@ export default async function TeachersPage({ searchParams }: { searchParams: Pro
         <form className="filters" method="get" action={BASE} role="search" aria-label="Filter teachers">
           <AutoSubmit>
             <div className="field field-search"><label htmlFor="q">Search</label><input className="input" id="q" name="q" type="search" defaultValue={f.q} placeholder="Name, ref, email, phone or specialisation" /></div>
+            <MoreFilters active={moreActive}>
             <div className="field"><label htmlFor="status">Record status</label>
               <select className="input" id="status" name="status" defaultValue={f.status}><option value="current">Active + inactive</option><option value="active">Active</option><option value="inactive">Inactive</option><option value="archived">Archived</option><option value="all">All</option></select></div>
             <div className="field"><label htmlFor="course">Teaches course</label>
               <select className="input" id="course" name="course" defaultValue={f.course ?? ""}><option value="">Any course</option>{courses.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
+            </MoreFilters>
           </AutoSubmit>
-          <div className="filter-actions"><button className="btn btn-secondary" type="submit"><Icon name="funnel" /> Apply</button>{filtered && <Link className="btn btn-ghost" href={BASE}>Clear</Link>}</div>
+          <div className="filter-actions"><button className="btn btn-secondary" type="submit"><Icon name="funnel" /> Apply</button>{filtered && <Link className="btn btn-ghost" href={BASE}>Clear filters</Link>}</div>
         </form>
+        <ActiveFilters total={total} noun={["teacher", "teachers"]} filters={chips} clearHref={BASE} />
         {rows.length === 0 ? (
           filtered ? <EmptyState icon="search" title="No teachers match these filters" text="Try a different search or clear the filters." action={<Link className="btn btn-secondary" href={BASE}>Clear filters</Link>} />
             : <EmptyState icon="person-badge" title="No teachers yet" text="Add your teachers so you can assign them to student enrolments." action={can(user, "teachers.create") ? <Link className="btn btn-primary" href={`${BASE}/new`}><Icon name="plus-lg" /> Add teacher</Link> : undefined} />
@@ -69,7 +82,7 @@ export default async function TeachersPage({ searchParams }: { searchParams: Pro
                   <tr key={r.id}>
                     <td className="cell-primary"><div className="person"><Avatar name={r.full_name} tone="blue" /><div><Link className="row-link" href={`${BASE}/${r.id}`}>{r.full_name}</Link>{r.specialisations && <div className="person-sub">{r.specialisations.slice(0, 60)}</div>}</div></div></td>
                     <td data-label="Ref" className="mono nowrap">{r.ref_no}</td>
-                    <td data-label="Contact"><div className="small">{r.phone ?? ""}</div><div className="small muted">{r.email ?? ""}</div></td>
+                    <td data-label="Contact">{r.phone || r.email ? <><div className="small">{r.phone ?? ""}</div><div className="small muted">{r.email ?? ""}</div></> : <span className="muted">—</span>}</td>
                     <td data-label="Courses" className="small">{r.courses ?? <span className="muted">None</span>}</td>
                     <td data-label="Students" className="num">{r.students}</td>
                     <td data-label="Status"><Badge status={r.status} /></td>

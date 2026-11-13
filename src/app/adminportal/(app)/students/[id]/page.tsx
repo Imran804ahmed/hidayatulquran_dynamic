@@ -102,7 +102,7 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
                     {enrolments.map((e) => (
                       <tr key={e.id}>
                         <td className="cell-primary">{can(user, "courses.view") ? <Link className="row-link" href={`${PORTAL}/enrolments/${e.id}`}>{e.course_name}</Link> : e.course_name}</td>
-                        <td data-label="Teacher">{e.teacher_id ? <>{e.teacher_name}{e.teacher_status !== "active" && <span className="pill pill-warn" style={{ marginLeft: 6 }}>Teacher {e.teacher_status}</span>}</> : <span className="muted">Not assigned</span>}</td>
+                        <td data-label="Teacher">{e.teacher_id ? <>{e.teacher_name}{e.teacher_status !== "active" && <span className="pill pill-warn ml-2">Teacher {e.teacher_status}</span>}</> : <span className="muted">Not assigned</span>}</td>
                         <td data-label="Package">{packageName(e.package) || "—"}</td>
                         <td data-label="Dates" className="small">{e.start_date ? fmtDate(e.start_date) : "—"}{e.end_date ? ` → ${fmtDate(e.end_date)}` : ""}</td>
                         <td data-label="Weekly classes" className="num">{e.slot_count}</td>

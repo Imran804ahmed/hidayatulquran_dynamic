@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { SITE } from "@/config/site";
+import { SITE, SITE_ICONS } from "@/config/site";
 import { fontVariables } from "@/styles/fonts";
 import styles from "./global-not-found.module.css";
 import Image from "next/image";
@@ -10,6 +10,7 @@ import Image from "next/image";
 export const metadata: Metadata = {
   title: `Page not found | ${SITE.name}`,
   robots: { index: false, follow: true },
+  icons: SITE_ICONS,
 };
 
 export default function GlobalNotFound() {

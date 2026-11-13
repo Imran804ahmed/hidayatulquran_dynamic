@@ -72,7 +72,7 @@ export function ReassignForm({ teacherId, teacherName, from, to, assignments, te
                   <td className="cell-primary"><strong>{a.student_name}</strong> <span className="mono muted">{a.student_ref}</span></td>
                   <td data-label="Course">{a.course_name}</td>
                   <td data-label="Weekly classes" className="num">{a.slot_count}</td>
-                  <td data-label="New teacher" style={{ minWidth: 240 }}>
+                  <td data-label="New teacher" className="cell-wide">
                     <SelectField name={`reassign_${a.id}`} label={<span className="sr-only">New teacher for {a.student_name}</span>} options={options} placeholder="Choose…" required />
                   </td>
                 </tr>

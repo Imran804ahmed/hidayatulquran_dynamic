@@ -14,7 +14,7 @@ function PermissionMatrix({ selected }: { selected: string[] }) {
   const current = state.values ? (state.values.permissions ?? "").split(",") : selected;
   return (
     <div>
-      <p className="label" style={{ marginBottom: 8 }}>Permissions</p>
+      <p className="label mb-2">Permissions</p>
       {Object.entries(PERMISSION_MATRIX).map(([group, perms]) => (
         <fieldset key={group} className="perm-group">
           <legend>{group}</legend>

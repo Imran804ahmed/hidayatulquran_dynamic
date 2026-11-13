@@ -8,8 +8,10 @@ import { localYmd, relativeTime, fmtDateTime } from "@/lib/portal/time";
 import { COUNTRIES, PACKAGES, REG_OPEN, REG_STATUS, countryName, packageName } from "@/lib/portal/lookups";
 import { REG_SORTS, registrationWhere } from "@/lib/portal/registrations";
 import { orderBy } from "@/lib/portal/students";
-import { Badge, EmptyState, FollowUp, Icon, PageHeader, Pagination, SortHeader, hrefWith, paginate, type Params } from "@/components/portal/ui";
-import { AutoSubmit, RememberList, ScrollMemory } from "@/components/portal/shell";
+import { ActiveFilters, Badge, EmptyState, FollowUp, Icon, PageHeader, Pagination, SortHeader, hrefWith, paginate, type ActiveFilter, type Params } from "@/components/portal/ui";
+import { AutoSubmit, MoreFilters, RememberList, ScrollMemory } from "@/components/portal/shell";
+
+const FOLLOWUP: Record<string, string> = { overdue: "Overdue", today: "Due today", week: "Next 7 days", none: "No follow-up set" };
 
 export const metadata: Metadata = { title: "Registrations" };
 const BASE = `${PORTAL}/registrations`;
@@ -36,12 +38,25 @@ export default async function RegistrationsPage({ searchParams }: { searchParams
   const tab = (status: string) => hrefWith(BASE, { ...params, status, page: undefined });
   const filtered = Boolean(f.q || f.followup || f.assigned || f.package || f.country || f.from || f.to);
   const openCount = REG_OPEN.reduce((s, k) => s + (counts[k] ?? 0), 0);
+  const without = (key: string) => hrefWith(BASE, params, { [key]: undefined, page: undefined });
+  const chip = (label: string, value: string | undefined, key: string): ActiveFilter[] => (value ? [{ label, value, removeHref: without(key) }] : []);
+  const assignedLabel = f.assigned === "me" ? "Me" : f.assigned === "unassigned" ? "Unassigned" : users.find((u) => String(u.id) === f.assigned)?.name ?? f.assigned;
+  const chips = [
+    ...chip("Search", f.q && `“${f.q}”`, "q"),
+    ...chip("Follow-up", f.followup && (FOLLOWUP[f.followup] ?? f.followup), "followup"),
+    ...chip("Assigned to", f.assigned && assignedLabel, "assigned"),
+    ...chip("Package", f.package && packageName(f.package), "package"),
+    ...chip("Country", f.country && countryName(f.country), "country"),
+    ...chip("Submitted from", f.from, "from"),
+    ...chip("Submitted to", f.to, "to"),
+  ];
+  const moreActive = chips.length - (f.q ? 1 : 0);
 
   return (
     <>
       <Suspense fallback={null}><RememberList module="registrations" /><ScrollMemory /></Suspense>
       <PageHeader eyebrow="Admissions" title="Registration requests"
-        subtitle="Submissions from registration.html. Review → contact → approve → convert to a student and enrol. Approval alone never creates a student, login or message."
+        subtitle="Submissions from the website registration form. Review → contact → approve → convert to a student and enrol. Approval alone never creates a student, login or message."
         actions={can(user, "registrations.export") ? <a className="btn btn-secondary" href={hrefWith(`${BASE}/export`, { ...f, status: f.status })}><Icon name="download" /> Export CSV</a> : undefined} />
       <div className="card">
         <nav className="tabs" aria-label="Registration status">
@@ -55,6 +70,7 @@ export default async function RegistrationsPage({ searchParams }: { searchParams
           <input type="hidden" name="status" value={f.status} />
           <AutoSubmit>
             <div className="field field-search"><label htmlFor="q">Search</label><input className="input" id="q" name="q" type="search" defaultValue={f.q} placeholder="Name, ref, email, guardian or phone" /></div>
+            <MoreFilters active={moreActive}>
             <div className="field"><label htmlFor="followup">Follow-up</label>
               <select className="input" id="followup" name="followup" defaultValue={f.followup ?? ""}><option value="">Any</option><option value="overdue">Overdue</option><option value="today">Due today</option><option value="week">Next 7 days</option><option value="none">No follow-up set</option></select></div>
             <div className="field"><label htmlFor="assigned">Assigned to</label>
@@ -65,12 +81,15 @@ export default async function RegistrationsPage({ searchParams }: { searchParams
               <select className="input" id="country" name="country" defaultValue={f.country ?? ""}><option value="">Any</option>{Object.entries(COUNTRIES).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></div>
             <div className="field"><label htmlFor="from">Submitted from</label><input className="input" id="from" name="from" type="date" defaultValue={f.from} /></div>
             <div className="field"><label htmlFor="to">Submitted to</label><input className="input" id="to" name="to" type="date" defaultValue={f.to} /></div>
+            </MoreFilters>
           </AutoSubmit>
-          <div className="filter-actions"><button className="btn btn-secondary" type="submit"><Icon name="funnel" /> Apply</button>{filtered && <Link className="btn btn-ghost" href={tab(f.status)}>Clear</Link>}</div>
+          <div className="filter-actions"><button className="btn btn-secondary" type="submit"><Icon name="funnel" /> Apply</button>{filtered && <Link className="btn btn-ghost" href={tab(f.status)}>Clear filters</Link>}</div>
         </form>
+        <ActiveFilters total={total} noun={["registration", "registrations"]} filters={chips} clearHref={tab(f.status)} />
         {rows.length === 0 ? (
           filtered || f.status !== "open"
-            ? <EmptyState icon="search" title="No registrations match" text="Nothing matches this status and these filters." action={<Link className="btn btn-secondary" href={BASE}>Show open requests</Link>} />
+            ? <EmptyState icon="search" title="No registrations match" text={filtered ? "Nothing matches this status and these filters. Remove a filter or clear them all." : "There are no registrations with this status."}
+                action={<Link className="btn btn-secondary" href={filtered ? tab(f.status) : BASE}>{filtered ? "Clear filters" : "Show open requests"}</Link>} />
             : <EmptyState icon="inbox" title="No open registration requests" text="New submissions from the website registration form will appear here." />
         ) : (
           <div className="table-wrap">
@@ -92,8 +111,8 @@ export default async function RegistrationsPage({ searchParams }: { searchParams
                       <Link className="row-link" href={`${BASE}/${r.id}`}>{r.full_name}</Link>{r.age ? <span className="muted small"> · age {r.age}</span> : null}
                       <div className="person-sub"><span className="mono">{r.ref_no}</span>{r.guardian_name ? ` · Guardian: ${r.guardian_name}` : ""}{r.student_id ? " · Converted" : ""}</div>
                     </td>
-                    <td data-label="Package" className="small">{packageName(r.package)}</td>
-                    <td data-label="Country">{countryName(r.country)}</td>
+                    <td data-label="Package" className="small">{packageName(r.package) || <span className="muted">—</span>}</td>
+                    <td data-label="Country">{countryName(r.country) || <span className="muted">—</span>}</td>
                     <td data-label="Submitted" className="nowrap" title={fmtDateTime(r.submitted_at, tz)}>{r.submitted_at_known ? relativeTime(r.submitted_at, tz) : <span className="muted">Imported (date unknown)</span>}</td>
                     <td data-label="Assigned" className="small">{r.assignee ?? <span className="muted">—</span>}</td>
                     <td data-label="Follow-up"><FollowUp date={r.follow_up_on} open={REG_OPEN.includes(r.status as never)} today={today} /></td>

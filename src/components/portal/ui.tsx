@@ -126,22 +126,100 @@ export function Pagination({ info, base, params }: { info: PageInfo; base: strin
   );
 }
 
-export function StatCard({ href, label, value, icon, tone, meta, definition }: {
-  href?: string; label: string; value: number | string; icon: string; tone?: "gold" | "blue" | "navy" | "danger"; meta?: ReactNode; definition?: string;
+/** Colour family for icon tiles (stat cards, module cards, sidebar icons). */
+export type Tone = "purple" | "pink" | "teal" | "amber" | "sky" | "coral" | "indigo" | "slate";
+
+export function StatCard({ href, label, value, icon, tone = "purple", meta, definition }: {
+  href?: string; label: string; value: number | string; icon: string; tone?: Tone; meta?: ReactNode; definition?: string;
 }) {
   // The main figure is one link; secondary links in `meta` sit beside it (never nested <a>).
   const head = (
     <>
-      <span className="stat-top"><span className="stat-label">{label}</span><span className="stat-icon"><Icon name={icon} /></span></span>
-      <span className="stat-value">{value}</span>
+      <span className={`tile tile-${tone}`}><Icon name={icon} /></span>
+      <span className="stat-text">
+        <span className="stat-label">{label}{href && <Icon name="chevron-right" className="stat-chev" />}</span>
+        <span className="stat-value">{value}</span>
+      </span>
     </>
   );
   return (
-    <div className={`stat${tone ? ` tone-${tone}` : ""}${href ? " is-link" : ""}`}>
+    <div className={`stat${href ? " is-link" : ""}`}>
       {href ? <Link className="stat-link" href={href}>{head}<span className="sr-only"> — view list</span></Link> : <span className="stat-link">{head}</span>}
-      {meta && <div className="stat-meta">{meta}</div>}
-      {definition && <div className="stat-def">{definition}</div>}
+      {(meta || definition) && (
+        <div className="stat-foot">
+          {meta && <div className="stat-meta">{meta}</div>}
+          {definition && <div className="stat-def">{definition}</div>}
+        </div>
+      )}
     </div>
+  );
+}
+
+/** Dashboard module shortcut: the whole card is one link. */
+export function ModuleCard({ href, label, description, icon, tone, badge }: {
+  href: string; label: string; description: string; icon: string; tone: Tone; badge?: number;
+}) {
+  return (
+    <Link className="module-card" href={href}>
+      <span className={`tile tile-lg tile-${tone}`}><Icon name={icon} /></span>
+      <span className="module-text">
+        <span className="module-title">{label}</span>
+        <span className="module-desc">{description}</span>
+      </span>
+      {badge ? <span className="module-badge">{badge > 99 ? "99+" : badge} new</span> : null}
+    </Link>
+  );
+}
+
+export type ActiveFilter = { label: string; value: ReactNode; removeHref: string };
+
+/**
+ * Result count plus one removable chip per active filter, and a single "Clear all". Rendered
+ * between the filter form and the results so the current view is always explained.
+ */
+export function ActiveFilters({ total, noun, filters, clearHref }: { total: number; noun: [string, string]; filters: ActiveFilter[]; clearHref: string }) {
+  if (filters.length === 0) return null;
+  return (
+    <div className="filter-summary" aria-live="polite">
+      <span><strong>{total}</strong> {total === 1 ? noun[0] : noun[1]} match</span>
+      <ul className="filter-chips list-plain" aria-label="Active filters">
+        {filters.map((f) => (
+          <li key={f.label}>
+            <Link className="chip" href={f.removeHref}>
+              {f.label}: {f.value}
+              <Icon name="x-lg" /><span className="sr-only"> (remove filter)</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+      {filters.length > 1 && <Link className="clear-all small" href={clearHref}>Clear all filters</Link>}
+    </div>
+  );
+}
+
+export type AttentionItem = { key: string; label: string; sub: string; count: number; href: string; urgent?: boolean; action: string };
+
+/** Dashboard work queue: one row per actionable count, each linking to the matching filtered list. */
+export function AttentionList({ items }: { items: AttentionItem[] }) {
+  const pending = items.filter((i) => i.count > 0);
+  return (
+    <>
+      {pending.length === 0 && <div className="attention-clear"><Icon name="check-circle-fill" /> All caught up: nothing is waiting for action.</div>}
+      <ul className="attention">
+        {items.map((i) => (
+          <li key={i.key} className={`attention-item${i.count === 0 ? " is-clear" : i.urgent ? " is-urgent" : ""}`}>
+            <Link className="attention-link" href={i.href}>
+              <span className="attention-count">{i.count === 0 ? <Icon name="check-lg" /> : i.count}</span>
+              <span className="attention-text">
+                <span className="attention-label">{i.label}{i.count === 0 && <span className="sr-only">: none</span>}</span>
+                <span className="attention-sub">{i.sub}</span>
+              </span>
+              {i.count > 0 && <span className="attention-go">{i.action} <Icon name="arrow-right" /></span>}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
 

@@ -9,7 +9,8 @@ export async function LoginScreen({ next, expired }: { next: string | null; expi
   let dbDown = false;
   try {
     noUsers = (await db.count("SELECT COUNT(*) FROM hq_users")) === 0;
-  } catch {
+  } catch (err) {
+    console.error("[portal] database check failed:", err);
     dbDown = true;
   }
   return (

@@ -176,8 +176,8 @@ export function CheckboxGroup({ name, label, options, defaultValue, hint, option
   const selected = state.values && name in state.values ? state.values[name].split(",") : defaultValue ?? [];
   const error = state.errors[name];
   return (
-    <fieldset className="field" style={{ border: 0, padding: 0, margin: "0 0 16px" }} aria-describedby={error ? `err-${name}` : undefined}>
-      <legend className="label" style={{ marginBottom: 6 }}>{label}{optional && <span className="opt">(optional)</span>}</legend>
+    <fieldset className="field fieldset-plain" aria-describedby={error ? `err-${name}` : undefined}>
+      <legend className="label">{label}{optional && <span className="opt">(optional)</span>}</legend>
       <div className="checks">
         {options.map(([v, l]) => (
           <label key={v} className="check"><input type="checkbox" name={name} value={v} defaultChecked={selected.includes(v)} /> {l}</label>
@@ -242,7 +242,7 @@ export function useConfirm() {
   const dialog = req ? (
     <dialog ref={ref} className="modal" aria-labelledby="confirm-title" onCancel={(e) => { e.preventDefault(); close(false); }}>
       <div className="modal-body">
-        <h2 id="confirm-title">{req.danger && <i className="bi bi-exclamation-triangle-fill" aria-hidden="true" style={{ color: "var(--danger)" }} />}{req.title}</h2>
+        <h2 id="confirm-title">{req.danger && <i className="bi bi-exclamation-triangle-fill text-danger" aria-hidden="true" />}{req.title}</h2>
         <p>{req.message}</p>
       </div>
       <div className="modal-actions">

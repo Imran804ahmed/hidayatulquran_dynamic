@@ -7,8 +7,10 @@ import { academyTimezone } from "@/lib/portal/settings";
 import { fmtDay } from "@/lib/portal/time";
 import { countryName } from "@/lib/portal/lookups";
 import { STUDENT_SORTS, activeCourses, orderBy, studentWhere, teacherOptions } from "@/lib/portal/students";
-import { Avatar, Badge, EmptyState, Icon, PageHeader, Pagination, SortHeader, hrefWith, paginate, type Params } from "@/components/portal/ui";
-import { AutoSubmit, RememberList, ScrollMemory } from "@/components/portal/shell";
+import { ActiveFilters, Avatar, Badge, EmptyState, Icon, PageHeader, Pagination, SortHeader, hrefWith, paginate, type ActiveFilter, type Params } from "@/components/portal/ui";
+import { AutoSubmit, MoreFilters, RememberList, ScrollMemory } from "@/components/portal/shell";
+
+const STATUS: Record<string, string> = { active: "Active", inactive: "Inactive", archived: "Archived", all: "All" };
 
 export const metadata: Metadata = { title: "Students" };
 
@@ -34,6 +36,17 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
   const params: Params = { q: f.q, status: sp.status, course: f.course, teacher: f.teacher, from: f.from, to: f.to, sort: sp.sort, dir: sp.dir };
   const filtered = Boolean(f.q || (sp.status && sp.status !== "current") || f.course || f.teacher || f.from || f.to);
   const sortProps = { base: BASE, params, sort: order.sort, dir: order.dir };
+  const without = (key: string) => hrefWith(BASE, params, { [key]: undefined, page: undefined });
+  const chip = (label: string, value: string | undefined, key: string): ActiveFilter[] => (value ? [{ label, value, removeHref: without(key) }] : []);
+  const chips = [
+    ...chip("Search", f.q && `“${f.q}”`, "q"),
+    ...chip("Status", f.status !== "current" ? STATUS[f.status] ?? f.status : undefined, "status"),
+    ...chip("Course", f.course && (courses.find((c) => String(c.id) === f.course)?.name ?? f.course), "course"),
+    ...chip("Teacher", f.teacher && (f.teacher === "none" ? "No teacher assigned" : teachers.find((t) => String(t.id) === f.teacher)?.full_name ?? f.teacher), "teacher"),
+    ...chip("Registered from", f.from, "from"),
+    ...chip("Registered to", f.to, "to"),
+  ];
+  const moreActive = chips.length - (f.q ? 1 : 0);
 
   return (
     <>
@@ -51,6 +64,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
         <form className="filters" method="get" action={BASE} role="search" aria-label="Filter students">
           <AutoSubmit>
             <div className="field field-search"><label htmlFor="q">Search</label><input className="input" id="q" name="q" type="search" defaultValue={f.q} placeholder="Name, ref, email, guardian or phone" /></div>
+            <MoreFilters active={moreActive}>
             <div className="field"><label htmlFor="status">Record status</label>
               <select className="input" id="status" name="status" defaultValue={f.status}>
                 <option value="current">Active + inactive</option><option value="active">Active</option><option value="inactive">Inactive</option><option value="archived">Archived</option><option value="all">All</option>
@@ -61,12 +75,14 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
               <select className="input" id="teacher" name="teacher" defaultValue={f.teacher ?? ""}><option value="">Any teacher</option><option value="none">No teacher assigned</option>{teachers.map((t) => <option key={t.id} value={t.id}>{t.full_name}{t.status !== "active" ? " (inactive)" : ""}</option>)}</select></div>
             <div className="field"><label htmlFor="from">Registered from</label><input className="input" id="from" name="from" type="date" defaultValue={f.from} /></div>
             <div className="field"><label htmlFor="to">Registered to</label><input className="input" id="to" name="to" type="date" defaultValue={f.to} /></div>
+            </MoreFilters>
           </AutoSubmit>
           <div className="filter-actions">
             <button className="btn btn-secondary" type="submit"><Icon name="funnel" /> Apply</button>
-            {filtered && <Link className="btn btn-ghost" href={BASE}>Clear</Link>}
+            {filtered && <Link className="btn btn-ghost" href={BASE}>Clear filters</Link>}
           </div>
         </form>
+        <ActiveFilters total={total} noun={["student", "students"]} filters={chips} clearHref={BASE} />
         {rows.length === 0 ? (
           filtered
             ? <EmptyState icon="search" title="No students match these filters" text="Try a different search or clear the filters." action={<Link className="btn btn-secondary" href={BASE}>Clear filters</Link>} />
@@ -89,9 +105,9 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
                   <tr key={r.id}>
                     <td className="cell-primary"><div className="person"><Avatar name={r.full_name} tone="green" /><div><Link className="row-link" href={`${BASE}/${r.id}`}>{r.full_name}</Link>{r.guardian_name && <div className="person-sub">Guardian: {r.guardian_name}</div>}</div></div></td>
                     <td data-label="Ref" className="mono nowrap">{r.ref_no}</td>
-                    <td data-label="Contact"><div className="small">{r.whatsapp ?? ""}</div><div className="small muted">{r.email ?? ""}</div></td>
+                    <td data-label="Contact">{r.whatsapp || r.email ? <><div className="small">{r.whatsapp ?? ""}</div><div className="small muted">{r.email ?? ""}</div></> : <span className="muted">—</span>}</td>
                     <td data-label="Courses">{r.courses ? <><div className="small">{r.courses}</div><div className="small muted">{r.teachers ?? "No teacher assigned"}</div></> : <span className="small muted">Not enrolled</span>}</td>
-                    <td data-label="Country">{countryName(r.country)}</td>
+                    <td data-label="Country">{countryName(r.country) || <span className="muted">—</span>}</td>
                     <td data-label="Registered" className="nowrap">{fmtDay(r.registered, tz)}</td>
                     <td data-label="Status"><Badge status={r.status} /></td>
                   </tr>

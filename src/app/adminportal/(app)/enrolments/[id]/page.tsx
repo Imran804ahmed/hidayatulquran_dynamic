@@ -66,7 +66,7 @@ export default async function EnrolmentPage({ params }: { params: Promise<{ id: 
               })}</ul>
             )}
             {manage && ["pending", "active"].includes(e.status) && e.student_status === "active" && (
-              <div className="card-foot"><h3 style={{ margin: "8px 0 12px" }}>Add a weekly class</h3><SlotForm enrolmentId={e.id} defaultTz={e.teacher_tz ?? tz} zones={allTimezones()} /></div>
+              <div className="card-foot"><h3 className="mt-2 mb-3">Add a weekly class</h3><SlotForm enrolmentId={e.id} defaultTz={e.teacher_tz ?? tz} zones={allTimezones()} /></div>
             )}
             {!manage && scheduled.length > 0 && <div className="card-foot muted">Meeting links are visible only to staff who manage enrolments.</div>}
           </section>

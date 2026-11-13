@@ -79,7 +79,7 @@ export default async function RegistrationPage({ params }: { params: Promise<{ i
           <Icon name="people-fill" />
           <div>
             <p><strong>Possible duplicates — please review:</strong></p>
-            <ul style={{ margin: "6px 0 0", paddingLeft: 18 }}>
+            <ul className="list-indent">
               {dups.students.map((s) => <li key={`s${s.id}`}>Student <Link href={`${PORTAL}/students/${s.id}`}>{s.ref_no} {s.full_name}</Link> ({s.reason || "similar"}, {s.status})</li>)}
               {dups.otherRegs.map((o) => <li key={`r${o.id}`}>Registration <Link href={`${PORTAL}/registrations/${o.id}`}>{o.ref_no} {o.full_name}</Link> ({o.status}, {fmtDateTime(o.submitted_at, tz)})</li>)}
             </ul>
@@ -105,7 +105,7 @@ export default async function RegistrationPage({ params }: { params: Promise<{ i
                 ["Preferred time", r.preferred_time ? `${r.preferred_time}${r.country ? ` (${countryName(r.country)} time)` : ""}` : ""],
                 ["Confirmation email", <Badge key="ce" status={r.confirmation_email} label={{ sent: "Accepted by mail server", failed: "Failed to send", pending: "Sending", skipped: "Not sent" }[r.confirmation_email]} />],
               ]} />
-              {r.message && <><h3 className="mt-4" style={{ marginBottom: 8 }}>Message / notes from applicant</h3><div className="message-box mb-4">{r.message}</div></>}
+              {r.message && <><h3 className="mt-4 mb-2">Message / notes from applicant</h3><div className="message-box mb-4">{r.message}</div></>}
             </div>
           </section>
           <NotesCard type="registration" id={r.id} notes={notes} canAdd={can(user, "registrations.edit")} tz={tz} />

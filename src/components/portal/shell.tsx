@@ -1,13 +1,21 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
-/** Mobile sidebar toggle: adds body.nav-open, closes on navigation and Escape. */
+const CLOSE_NAV = "hq:close-nav";
+
+/**
+ * Mobile navigation drawer toggle (shown at ≤1024px). While open: body.nav-open, the page behind
+ * is inert (focus stays in the drawer), focus moves to the first link, and Escape, the backdrop,
+ * the drawer's close button or a navigation closes it and returns focus to this button.
+ */
 export function MenuToggle() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const wasOpen = useRef(false);
   // Close when the route changes (state is adjusted during render, not in an effect).
   const [menuPath, setMenuPath] = useState(pathname);
   if (menuPath !== pathname) {
@@ -15,21 +23,81 @@ export function MenuToggle() {
     setOpen(false);
   }
   useEffect(() => {
+    const main = document.querySelector<HTMLElement>(".main");
     document.body.classList.toggle("nav-open", open);
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    if (main) main.inert = open;
+    if (open) {
+      (document.querySelector<HTMLElement>('#sidebar .nav a[aria-current="page"]') ?? document.querySelector<HTMLElement>("#sidebar .nav a"))?.focus();
+    } else if (wasOpen.current) {
+      btnRef.current?.focus();
+    }
+    wasOpen.current = open;
+    const close = () => setOpen(false);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
     const backdrop = document.querySelector(".backdrop");
-    const onBackdrop = () => setOpen(false);
     document.addEventListener("keydown", onKey);
-    backdrop?.addEventListener("click", onBackdrop);
+    document.addEventListener(CLOSE_NAV, close);
+    backdrop?.addEventListener("click", close);
     return () => {
       document.removeEventListener("keydown", onKey);
-      backdrop?.removeEventListener("click", onBackdrop);
+      document.removeEventListener(CLOSE_NAV, close);
+      backdrop?.removeEventListener("click", close);
     };
   }, [open]);
+  // Leaving the mobile breakpoint with the drawer open must not leave the page inert.
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1025px)");
+    const onChange = () => mq.matches && setOpen(false);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
   return (
-    <button className="icon-btn menu-toggle" type="button" aria-controls="sidebar" aria-expanded={open} aria-label={open ? "Close menu" : "Open menu"} onClick={() => setOpen((o) => !o)}>
-      <i className={`bi ${open ? "bi-x-lg" : "bi-list"}`} aria-hidden="true" />
+    <button ref={btnRef} className="icon-btn menu-toggle" type="button" aria-controls="sidebar" aria-expanded={open} aria-label="Open navigation menu" onClick={() => setOpen((o) => !o)}>
+      <i className="bi bi-list" aria-hidden="true" />
     </button>
+  );
+}
+
+/**
+ * Sidebar header controls. Desktop: collapse to icons / expand (remembered in a cookie so the
+ * server renders the same width, no flash). Mobile drawer: a close button inside the drawer.
+ */
+export function SidebarControls({ collapsed: initial }: { collapsed: boolean }) {
+  const [collapsed, setCollapsed] = useState(initial);
+  const toggle = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    document.querySelector(".app-shell")?.classList.toggle("is-collapsed", next);
+    document.cookie = `hq_sidebar=${next ? "collapsed" : "expanded"}; Max-Age=31536000; path=/adminportal; SameSite=Lax`;
+  };
+  return (
+    <>
+      <button type="button" className="sidebar-btn sidebar-collapse" aria-controls="sidebar" aria-expanded={!collapsed}
+        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"} title={collapsed ? "Expand sidebar" : "Collapse sidebar"} onClick={toggle}>
+        <i className={`bi ${collapsed ? "bi-chevron-double-right" : "bi-chevron-double-left"}`} aria-hidden="true" />
+      </button>
+      <button type="button" className="sidebar-btn sidebar-close" aria-label="Close navigation menu" onClick={() => document.dispatchEvent(new Event(CLOSE_NAV))}>
+        <i className="bi bi-x-lg" aria-hidden="true" />
+      </button>
+    </>
+  );
+}
+
+/**
+ * Secondary list filters. On wide screens they are always shown inline (the toggle is hidden by
+ * CSS); on phones they collapse behind a "Filters" toggle so results stay near the top. Starts
+ * open when any of these filters is active.
+ */
+export function MoreFilters({ active, children }: { active: number; children: React.ReactNode }) {
+  const [open, setOpen] = useState(active > 0);
+  const id = useId();
+  return (
+    <>
+      <button type="button" className="btn btn-secondary filter-more-toggle" aria-expanded={open} aria-controls={id} onClick={() => setOpen((o) => !o)}>
+        <i className="bi bi-sliders" aria-hidden="true" /> {open ? "Hide filters" : "More filters"}{active ? ` (${active} active)` : ""}
+      </button>
+      <div id={id} className={`filter-more${open ? " is-open" : ""}`}>{children}</div>
+    </>
   );
 }
 

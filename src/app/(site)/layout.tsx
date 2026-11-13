@@ -9,7 +9,7 @@ import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import FloatingActions from "@/components/layout/FloatingActions";
 import SiteEffects from "@/components/layout/SiteEffects";
-import { SITE } from "@/config/site";
+import { SITE, SITE_ICONS } from "@/config/site";
 import { fontVariables } from "@/styles/fonts";
 
 export const metadata: Metadata = {
@@ -17,10 +17,7 @@ export const metadata: Metadata = {
   applicationName: SITE.name,
   authors: [{ name: SITE.name }],
   robots: { index: true, follow: true },
-  icons: {
-    icon: [{ url: SITE.logo, type: "image/png" }],
-    apple: SITE.logo,
-  },
+  icons: SITE_ICONS,
 };
 
 export const viewport: Viewport = { themeColor: "#082c4c" };

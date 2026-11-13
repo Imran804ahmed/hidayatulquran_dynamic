@@ -1,13 +1,14 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { PORTAL, can, currentUser, hadSessionCookie, safeNext } from "@/lib/portal/auth";
 import * as db from "@/lib/portal/db";
 import { academyTimezone } from "@/lib/portal/settings";
 import { localYmd } from "@/lib/portal/time";
-import { SidebarNav, type NavGroup } from "@/components/portal/nav";
-import { FlashMessages, MenuCloser, MenuToggle, NavProgress } from "@/components/portal/shell";
+import { SidebarNav, TopbarTitle, type NavGroup } from "@/components/portal/nav";
+import { portalModules } from "@/lib/portal/modules";
+import { FlashMessages, MenuCloser, MenuToggle, NavProgress, SidebarControls } from "@/components/portal/shell";
 import { logoutAction } from "@/server/actions/auth";
 import { Avatar } from "@/components/portal/ui";
 import Image from "next/image";
@@ -24,80 +25,64 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   const today = localYmd(await academyTimezone());
-  const counts = { reg: 0, enq: 0, overdue: 0 };
+  const counts = { reg: 0, enq: 0, regOverdue: 0, enqOverdue: 0 };
   if (can(user, "registrations.view")) {
     counts.reg = await db.count("SELECT COUNT(*) FROM hq_registrations WHERE status = 'new'");
-    counts.overdue += await db.count("SELECT COUNT(*) FROM hq_registrations WHERE follow_up_on < ? AND status IN ('new','under_review','contacted','approved')", [today]);
+    counts.regOverdue = await db.count("SELECT COUNT(*) FROM hq_registrations WHERE follow_up_on < ? AND status IN ('new','under_review','contacted','approved')", [today]);
   }
   if (can(user, "enquiries.view")) {
     counts.enq = await db.count("SELECT COUNT(*) FROM hq_enquiries WHERE status = 'new'");
-    counts.overdue += await db.count("SELECT COUNT(*) FROM hq_enquiries WHERE follow_up_on < ? AND status IN ('new','in_progress')", [today]);
+    counts.enqOverdue = await db.count("SELECT COUNT(*) FROM hq_enquiries WHERE follow_up_on < ? AND status IN ('new','in_progress')", [today]);
   }
+  // Desktop sidebar width is remembered in a cookie so the server renders it without a flash.
+  const collapsed = (await cookies()).get("hq_sidebar")?.value === "collapsed";
   const p = (path: string) => `${PORTAL}/${path}`;
-  const groups: NavGroup[] = [
-    { title: "Overview", items: can(user, "dashboard.view") ? [{ href: p("dashboard"), label: "Dashboard", icon: "grid-1x2" }] : [] },
-    {
-      title: "Admissions",
-      items: [
-        ...(can(user, "registrations.view") ? [{ href: p("registrations"), label: "Registrations", icon: "person-plus", count: counts.reg }] : []),
-        ...(can(user, "enquiries.view") ? [{ href: p("enquiries"), label: "Enquiries", icon: "envelope", count: counts.enq }] : []),
-      ],
-    },
-    {
-      title: "People",
-      items: [
-        ...(can(user, "students.view") ? [{ href: p("students"), label: "Students", icon: "people" }] : []),
-        ...(can(user, "teachers.view") ? [{ href: p("teachers"), label: "Teachers", icon: "person-badge" }] : []),
-      ],
-    },
-    {
-      title: "Academics",
-      items: can(user, "courses.view")
-        ? [
-            { href: p("courses"), label: "Courses", icon: "book" },
-            { href: p("enrolments"), label: "Enrolments", icon: "journal-check" },
-            { href: p("timetable"), label: "Timetable", icon: "calendar-week" },
-          ]
-        : [],
-    },
-    {
-      title: "Administration",
-      items: [
-        ...(can(user, "reports.view") ? [{ href: p("reports"), label: "Reports", icon: "bar-chart-line" }] : []),
-        ...(can(user, "audit.view") ? [{ href: p("audit"), label: "Audit history", icon: "clock-history" }] : []),
-        ...(can(user, "users.manage") ? [{ href: p("users"), label: "Users & roles", icon: "shield-lock" }] : []),
-        ...(can(user, "settings.manage") ? [{ href: p("settings"), label: "Settings", icon: "gear" }] : []),
-      ],
-    },
-  ].filter((g) => g.items.length > 0);
-  const notifTotal = counts.reg + counts.enq + counts.overdue;
+  // Same sections and permission checks as the dashboard module grid (src/lib/portal/modules.ts).
+  const newCounts: Record<string, number> = { registrations: counts.reg, enquiries: counts.enq };
+  const groups: NavGroup[] = portalModules(user).map((g) => ({
+    title: g.title,
+    items: g.items.map((m) => ({ href: m.href, label: m.label, icon: m.icon, tone: m.tone, count: newCounts[m.key] })),
+  }));
+  const notifTotal = counts.reg + counts.enq + counts.regOverdue + counts.enqOverdue;
 
   return (
     <>
       <a className="skip-link" href="#main">Skip to content</a>
       <Suspense fallback={null}><NavProgress /></Suspense>
+      <div className={`app-shell${collapsed ? " is-collapsed" : ""}`}>
       <aside className="sidebar" id="sidebar" aria-label="Main navigation">
-        <Link className="brand" href={p("dashboard")}>
-          <Image className="brand-logo" src="/assets/img/hidayatulquran1.png" alt="" width={46} height={46} />
-          <span className="brand-text"><span className="brand-name">Hidayatul Quran</span><span className="brand-sub">Admin portal</span></span>
-        </Link>
+        <div className="sidebar-head">
+          <Link className="brand" href={p("dashboard")} title="Dashboard">
+            <Image className="brand-logo" src="/assets/img/hidayatulquran1.png" alt="" width={46} height={46} />
+            <span className="brand-text"><span className="brand-name">Hidayatul Quran</span><span className="brand-sub">Admin portal</span></span>
+          </Link>
+          <SidebarControls collapsed={collapsed} />
+        </div>
         <SidebarNav groups={groups} />
         <div className="sidebar-foot">
-          <a href="/" target="_blank" rel="noopener"><i className="bi bi-box-arrow-up-right" aria-hidden="true" /> View public website</a>
+          <a href="/" target="_blank" rel="noopener" title="View public website (opens in a new tab)">
+            <i className="bi bi-globe2" aria-hidden="true" /> <span className="foot-label">View public website<span className="sr-only"> (opens in a new tab)</span></span>
+          </a>
+          <form action={logoutAction}>
+            <button type="submit" className="sidebar-logout" title="Sign out">
+              <i className="bi bi-box-arrow-right" aria-hidden="true" /> <span className="foot-label">Sign out</span>
+            </button>
+          </form>
         </div>
       </aside>
       <div className="backdrop" aria-hidden="true" />
       <div className="main">
         <header className="topbar">
           <MenuToggle />
-          {can(user, "students.view") && (
-            <form className="topbar-search" role="search" action={p("students")} method="get">
-              <i className="bi bi-search" aria-hidden="true" />
-              <label className="sr-only" htmlFor="global-q">Search students by name, reference, email or phone</label>
-              <input id="global-q" name="q" type="search" placeholder="Search students by name, ref, email or phone…" />
-            </form>
-          )}
+          <TopbarTitle groups={groups} dashboardHref={p("dashboard")} firstName={user.name.split(" ")[0]} />
           <div className="topbar-right">
+            {can(user, "students.view") && (
+              <form className="topbar-search" role="search" action={p("students")} method="get">
+                <i className="bi bi-search" aria-hidden="true" />
+                <label className="sr-only" htmlFor="global-q">Search students by name, reference, email or phone</label>
+                <input id="global-q" name="q" type="search" placeholder="Search students…" title="Search students by name, reference, email or phone" />
+              </form>
+            )}
             <details className="menu notif">
               <summary className="icon-btn" aria-label={`Notifications: ${notifTotal} items need attention`}>
                 <i className="bi bi-bell" aria-hidden="true" />
@@ -107,9 +92,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 <div className="menu-head">Needs attention</div>
                 {can(user, "registrations.view") && <Link href={p("registrations?status=new")}><i className="bi bi-person-plus" aria-hidden="true" /> New registrations <span className="count">{counts.reg}</span></Link>}
                 {can(user, "enquiries.view") && <Link href={p("enquiries?status=new")}><i className="bi bi-envelope" aria-hidden="true" /> New enquiries <span className="count">{counts.enq}</span></Link>}
-                {(can(user, "registrations.view") || can(user, "enquiries.view")) && (
-                  <Link href={p("dashboard#follow-ups")}><i className="bi bi-alarm" aria-hidden="true" /> Overdue follow-ups <span className="count">{counts.overdue}</span></Link>
-                )}
+                {can(user, "registrations.view") && <Link href={p("registrations?followup=overdue")}><i className="bi bi-alarm" aria-hidden="true" /> Overdue registration follow-ups <span className="count">{counts.regOverdue}</span></Link>}
+                {can(user, "enquiries.view") && <Link href={p("enquiries?followup=overdue")}><i className="bi bi-alarm" aria-hidden="true" /> Overdue enquiry follow-ups <span className="count">{counts.enqOverdue}</span></Link>}
+                {notifTotal === 0 && <p className="menu-empty"><i className="bi bi-check-circle" aria-hidden="true" /> Nothing needs attention right now.</p>}
               </div>
             </details>
             <details className="menu">
@@ -134,6 +119,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <MenuCloser />
           {children}
         </main>
+      </div>
       </div>
     </>
   );

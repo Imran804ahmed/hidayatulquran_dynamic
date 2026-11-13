@@ -9,6 +9,18 @@ export const SITE = {
   whatsappNumber: "923365398542",
 } as const;
 
+/** Favicon set (generated from the logo artwork). Used by every root layout: site, admin portal, 404. */
+export const SITE_ICONS = {
+  icon: [
+    { url: "/favicon.ico", sizes: "any" },
+    { url: "/assets/img/favicon.png", type: "image/png", sizes: "32x32" },
+    { url: "/assets/img/icon-192.png", type: "image/png", sizes: "192x192" },
+    { url: "/assets/img/icon-512.png", type: "image/png", sizes: "512x512" },
+  ],
+  shortcut: "/favicon.ico",
+  apple: { url: "/assets/img/apple-touch-icon.png", sizes: "180x180" },
+};
+
 /** WhatsApp chat link with a prefilled message. */
 export function whatsappLink(message: string) {
   return `https://wa.me/${SITE.whatsappNumber}?text=${encodeURIComponent(message).replace(/'/g, "%27")}`;
