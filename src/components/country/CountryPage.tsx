@@ -26,7 +26,7 @@ export function countryMetadata(country: CountryContent): Metadata {
   });
 }
 
-/** Template for the country landing pages (UK, USA, Canada, UAE, Saudi Arabia). */
+/** Template for the country landing pages (see src/content/countries.tsx). */
 export default function CountryPage({ country }: { country: CountryContent }) {
   const half = Math.ceil(country.faqs.length / 2);
   const faqIds = country.faqs.map((_, i) => `${country.faqId}-${i + 1}`);

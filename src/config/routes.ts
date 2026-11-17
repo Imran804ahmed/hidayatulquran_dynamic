@@ -15,6 +15,15 @@ export const PUBLIC_PAGES: SitemapEntry[] = [
   { path: "/online-quran-classes-canada", priority: 0.9, changeFrequency: "monthly" },
   { path: "/online-quran-classes-uae", priority: 0.9, changeFrequency: "monthly" },
   { path: "/online-quran-classes-saudi-arabia", priority: 0.9, changeFrequency: "monthly" },
+  { path: "/online-quran-classes-australia", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/online-quran-classes-pakistan", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/online-quran-classes-india", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/online-quran-classes-germany", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/online-quran-classes-france", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/online-quran-classes-russia", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/online-quran-classes-brazil", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/online-quran-classes-south-africa", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/online-quran-classes-qatar", priority: 0.8, changeFrequency: "monthly" },
   { path: "/faq", priority: 0.8, changeFrequency: "monthly" },
   { path: "/registration", priority: 0.8, changeFrequency: "monthly" },
   { path: "/enrollment-process", priority: 0.8, changeFrequency: "monthly" },
@@ -24,5 +33,5 @@ export const PUBLIC_PAGES: SitemapEntry[] = [
 ];
 
 /** Date the content (or URL) of the public pages last changed. Update when publishing changes. */
-export const CONTENT_LAST_MODIFIED = "2026-11-12";
+export const CONTENT_LAST_MODIFIED = "2026-11-17";
 

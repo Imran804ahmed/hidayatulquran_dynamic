@@ -1,5 +1,33 @@
 import Link from "next/link";
+import { Fragment } from "react";
 import SiteImage from "@/components/ui/SiteImage";
+
+const COUNTRY_LINKS: [string, string][] = [
+  ["UK", "/online-quran-classes-uk"],
+  ["USA", "/online-quran-classes-usa"],
+  ["UAE", "/online-quran-classes-uae"],
+  ["Canada", "/online-quran-classes-canada"],
+  ["Saudi Arabia", "/online-quran-classes-saudi-arabia"],
+  ["Australia", "/online-quran-classes-australia"],
+  ["Pakistan", "/online-quran-classes-pakistan"],
+  ["India", "/online-quran-classes-india"],
+  ["Qatar", "/online-quran-classes-qatar"],
+  ["Germany", "/online-quran-classes-germany"],
+  ["France", "/online-quran-classes-france"],
+  ["Russia", "/online-quran-classes-russia"],
+  ["Brazil", "/online-quran-classes-brazil"],
+  ["South Africa", "/online-quran-classes-south-africa"],
+];
+
+const COURSE_LINKS: [string, string][] = [
+  ["Qaida", "/noorani-qaida-online"],
+  ["Reading", "/quran-reading-course-online"],
+  ["Tajweed", "/quran-tajweed-course-online"],
+  ["Hifz", "/quran-memorization-hifz-online"],
+  ["Tafseer", "/tafseer-quran-course-online"],
+  ["Arabic", "/quranic-arabic-course-online"],
+];
+
 export default function HeroSection() {
   return (
     <section id="hero" className="hero d-flex align-items-center" aria-labelledby="hero-heading">
@@ -9,25 +37,27 @@ export default function HeroSection() {
             <p className="hero-eyebrow" data-aos="fade-up">Welcome to</p>
             <h1 id="hero-heading" data-aos="fade-up">Online Quran Classes for Kids &amp; Adults</h1>
             <p className="hero-lead" data-aos="fade-up" data-aos-delay="400">
-              Join live 1-on-1{" "}
+              Live 1-on-1{" "}
               <strong>online Quran classes</strong>
-              {" "}with certified male and female tutors from the comfort of your home in the{" "}
+              {" "}with certified male &amp; female tutors in the{" "}
               <strong>
-                <Link href="/online-quran-classes-uk" style={{ color: "inherit", textDecoration: "underline" }}>UK</Link>
-                ,{" "}
-                <Link href="/online-quran-classes-usa" style={{ color: "inherit", textDecoration: "underline" }}>USA</Link>
-                ,{" "}
-                <Link href="/online-quran-classes-uae" style={{ color: "inherit", textDecoration: "underline" }}>UAE</Link>
-                ,{" "}
-                <Link href="/online-quran-classes-canada" style={{ color: "inherit", textDecoration: "underline" }}>Canada</Link>
-                {" "}or{" "}
-                <Link href="/online-quran-classes-saudi-arabia" style={{ color: "inherit", textDecoration: "underline" }}>Saudi Arabia</Link>
+                {COUNTRY_LINKS.map(([label, href], i) => (
+                  <Fragment key={href}>
+                    {i > 0 && (i === COUNTRY_LINKS.length - 1 ? " and " : ", ")}
+                    <Link href={href} style={{ color: "inherit", textDecoration: "underline" }}>{label}</Link>
+                  </Fragment>
+                ))}
               </strong>
-              . Learn{" "}
-              <Link href="/quran-tajweed-course-online" style={{ color: "inherit", textDecoration: "underline" }}>Tajweed</Link>
-              ,{" "}
-              <Link href="/quran-memorization-hifz-online" style={{ color: "inherit", textDecoration: "underline" }}>Hifz</Link>
-              , and more.
+              .
+              <br />
+              Learn{" "}
+              {COURSE_LINKS.map(([label, href], i) => (
+                <Fragment key={href}>
+                  {i > 0 && (i === COURSE_LINKS.length - 1 ? " and " : ", ")}
+                  <Link href={href} style={{ color: "inherit", textDecoration: "underline" }}>{label}</Link>
+                </Fragment>
+              ))}
+              .
             </p>
             <p className="hero-subtitle" data-aos="fade-up" data-aos-delay="500">
               Book a{" "}

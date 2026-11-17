@@ -1,21 +1,16 @@
 import Link from "next/link";
 // Content of the country landing pages. Rendered by components/country/CountryPage.
 import type { CountryContent } from "@/components/country/types";
+import { MORE_COUNTRIES } from "./countries-more";
+import { countryLanguages } from "./country-hreflang";
 
-export const COUNTRIES = {
+const BASE_COUNTRIES = {
   uk: {
     path: "/online-quran-classes-uk",
     title: "Online Quran Classes in the UK — Certified Tutors | HidayatulQuran Academy",
     description: "Join live 1-on-1 online Quran classes in the UK with certified male and female tutors. Tajweed, Hifz, Noorani Qaida for kids and adults. Free trial — no payment required. GBP pricing available.",
     keywords: "online Quran classes UK, Quran tutor UK, learn Quran online UK, online Quran teacher UK, Quran classes for kids UK, Tajweed online UK, Hifz classes UK, female Quran teacher UK, one to one Quran classes UK, Noorani Qaida UK, Islamic education online UK",
-    languages: {
-      "en-gb": "/online-quran-classes-uk",
-      "en-us": "/online-quran-classes-usa",
-      "en-ca": "/online-quran-classes-canada",
-      "en-ae": "/online-quran-classes-uae",
-      "en-sa": "/online-quran-classes-saudi-arabia",
-      "x-default": "/"
-    },
+    languages: countryLanguages("/online-quran-classes-uk"),
     ogTitle: "Online Quran Classes in the UK — Certified Tutors | HidayatulQuran Academy",
     ogDescription: "Live 1-on-1 online Quran classes for UK students. Certified tutors, GBP pricing, flexible GMT/BST scheduling. Free trial class available.",
     ogLocale: "en_GB",
@@ -285,14 +280,7 @@ export const COUNTRIES = {
     title: "Online Quran Classes in the USA — Certified Tutors | HidayatulQuran Academy",
     description: "Join live 1-on-1 online Quran classes in the USA with certified male and female tutors. Tajweed, Hifz, Noorani Qaida for kids and adults. All US time zones covered. Free trial — no payment required.",
     keywords: "online Quran classes USA, Quran tutor USA, learn Quran online America, online Quran teacher USA, Quran classes for kids USA, Tajweed online USA, Hifz classes USA, female Quran teacher USA, one to one Quran classes USA, Noorani Qaida USA, Islamic education online USA",
-    languages: {
-      "en-us": "/online-quran-classes-usa",
-      "en-gb": "/online-quran-classes-uk",
-      "en-ca": "/online-quran-classes-canada",
-      "en-ae": "/online-quran-classes-uae",
-      "en-sa": "/online-quran-classes-saudi-arabia",
-      "x-default": "/"
-    },
+    languages: countryLanguages("/online-quran-classes-usa"),
     ogTitle: "Online Quran Classes in the USA — Certified Tutors | HidayatulQuran Academy",
     ogDescription: "Live 1-on-1 online Quran classes for US students. Certified tutors, USD pricing, flexible EST/CST/PST scheduling. Free trial class available.",
     ogLocale: "en_US",
@@ -547,14 +535,7 @@ export const COUNTRIES = {
     title: "Online Quran Classes in Canada — Certified Tutors | HidayatulQuran Academy",
     description: "Join live 1-on-1 online Quran classes in Canada with certified male and female tutors. Tajweed, Hifz, Noorani Qaida for kids and adults in Toronto, Vancouver, Calgary and more. Free trial available.",
     keywords: "online Quran classes Canada, Quran tutor Canada, learn Quran online Canada, online Quran teacher Canada, Quran classes for kids Canada, Tajweed online Canada, Hifz classes Canada, female Quran teacher Canada, one to one Quran classes Canada, Noorani Qaida Canada, Islamic education online Canada",
-    languages: {
-      "en-ca": "/online-quran-classes-canada",
-      "en-gb": "/online-quran-classes-uk",
-      "en-us": "/online-quran-classes-usa",
-      "en-ae": "/online-quran-classes-uae",
-      "en-sa": "/online-quran-classes-saudi-arabia",
-      "x-default": "/"
-    },
+    languages: countryLanguages("/online-quran-classes-canada"),
     ogTitle: "Online Quran Classes in Canada — Certified Tutors | HidayatulQuran Academy",
     ogDescription: "Live 1-on-1 online Quran classes for Canadian students. Certified tutors, CAD pricing, flexible scheduling for all Canadian time zones. Free trial class available.",
     ogLocale: "en_CA",
@@ -808,14 +789,7 @@ export const COUNTRIES = {
     title: "Online Quran Classes in UAE — Certified Tutors | HidayatulQuran Academy",
     description: "Join live 1-on-1 online Quran classes in UAE with certified male and female tutors. Tajweed, Hifz, Noorani Qaida for kids and adults in Dubai, Abu Dhabi, Sharjah and across the UAE. Free trial available.",
     keywords: "online Quran classes UAE, Quran tutor UAE, learn Quran online Dubai, online Quran teacher UAE, Quran classes for kids Dubai, Tajweed online UAE, Hifz classes Dubai, female Quran teacher UAE, one to one Quran classes UAE, Noorani Qaida UAE, Islamic education online Dubai",
-    languages: {
-      "en-ae": "/online-quran-classes-uae",
-      "en-gb": "/online-quran-classes-uk",
-      "en-us": "/online-quran-classes-usa",
-      "en-ca": "/online-quran-classes-canada",
-      "en-sa": "/online-quran-classes-saudi-arabia",
-      "x-default": "/"
-    },
+    languages: countryLanguages("/online-quran-classes-uae"),
     ogTitle: "Online Quran Classes in UAE — Certified Tutors | HidayatulQuran Academy",
     ogDescription: "Live 1-on-1 online Quran classes for UAE students in Dubai, Abu Dhabi, Sharjah. AED pricing, GST scheduling. Free trial class available.",
     ogLocale: "en_AE",
@@ -1068,14 +1042,7 @@ export const COUNTRIES = {
     title: "Online Quran Classes in Saudi Arabia — Certified Tutors | HidayatulQuran Academy",
     description: "Join live 1-on-1 online Quran classes in Saudi Arabia with certified male and female tutors. Tajweed, Hifz, Noorani Qaida for kids and adults in Riyadh, Jeddah, Mecca and across KSA. Free trial available.",
     keywords: "online Quran classes Saudi Arabia, Quran tutor KSA, learn Quran online Riyadh, online Quran teacher Saudi Arabia, Quran classes for kids Riyadh, Tajweed online KSA, Hifz classes Saudi Arabia, female Quran teacher KSA, one to one Quran classes Jeddah, Noorani Qaida KSA, Islamic education online Saudi Arabia",
-    languages: {
-      "en-sa": "/online-quran-classes-saudi-arabia",
-      "en-gb": "/online-quran-classes-uk",
-      "en-us": "/online-quran-classes-usa",
-      "en-ca": "/online-quran-classes-canada",
-      "en-ae": "/online-quran-classes-uae",
-      "x-default": "/"
-    },
+    languages: countryLanguages("/online-quran-classes-saudi-arabia"),
     ogTitle: "Online Quran Classes in Saudi Arabia — Certified Tutors | HidayatulQuran Academy",
     ogDescription: "Live 1-on-1 online Quran classes for students in Saudi Arabia. Certified tutors, SAR pricing, AST time zone scheduling. Free trial class available.",
     ogLocale: "en_SA",
@@ -1326,3 +1293,5 @@ export const COUNTRIES = {
     ],
   },
 } satisfies Record<string, CountryContent>;
+
+export const COUNTRIES = { ...BASE_COUNTRIES, ...MORE_COUNTRIES };
