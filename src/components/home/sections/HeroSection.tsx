@@ -75,7 +75,7 @@ export default function HeroSection() {
             </div>
           </div>
           <div className="col-lg-6 hero-img" data-aos="zoom-out" data-aos-delay="100">
-            <SiteImage src="/assets/img/hidayatulquran1.png" className="img-fluid" alt="HidayatulQuran Academy - Online Quran learning with certified tutors" fetchPriority="high" sizes="(max-width: 768px) 100vw, 480px" />
+            <SiteImage src="/assets/img/hidayatulquran1.png" className="img-fluid" alt="HidayatulQuran Academy - Online Quran learning with certified tutors" fetchPriority="high" loading="eager" sizes="(max-width: 768px) 100vw, 480px" />
           </div>
         </div>
       </div>

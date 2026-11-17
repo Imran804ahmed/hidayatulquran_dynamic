@@ -1,4 +1,5 @@
-import { englishAlternates, pageMetadata } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
+import { countryLanguages } from "@/content/country-hreflang";
 import JsonLd from "@/components/seo/JsonLd";
 import HeroSection from "@/components/home/sections/HeroSection";
 import CoursesSection from "@/components/home/sections/CoursesSection";
@@ -21,7 +22,8 @@ export const metadata = pageMetadata({
   ogDescription: "Join live 1-on-1 online Quran classes with certified male and female tutors. Tajweed, Hifz, Noorani Qaida for kids and adults in USA, UK, Canada. Free trial!",
   twitterDescription: "Join live 1-on-1 online Quran classes. Tajweed, Hifz, Noorani Qaida for kids and adults in USA, UK, Canada. Book a free trial class today!",
   locale: "en_US",
-  languages: englishAlternates("/"),
+  // The homepage is the x-default of the country cluster, so it lists the same set as every country page.
+  languages: countryLanguages("/"),
 });
 
 export default function HomePage() {

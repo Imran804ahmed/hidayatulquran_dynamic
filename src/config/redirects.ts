@@ -8,12 +8,15 @@ const renamed: Record<string, string> = {
   index: "/",
   Explore: "/explore",
   socialPlatforms: "/social-platforms",
-  // FlexStart template demo pages that were never part of the real site.
-  "inner-page": "/",
-  "portfolio-details": "/",
-  blog: "/",
-  "blog-single": "/",
 };
+
+/**
+ * FlexStart template demo pages that were never part of the real site. They answer 410 Gone
+ * (see proxy.ts) instead of redirecting to the home page, which search engines treat as a soft 404.
+ */
+export const GONE_PATHS = new Set(
+  ["inner-page", "portfolio-details", "blog", "blog-single"].flatMap((p) => [`/${p}`, `/${p}.html`]),
+);
 
 const pages = [
   "about",
@@ -40,7 +43,4 @@ export const legacyRedirects: Redirect[] = [
   // Old paths without the extension. (No "/Explore" -> "/explore" rule: Next matches redirect
   // sources case-insensitively, so it would loop.)
   { source: "/socialPlatforms", destination: "/social-platforms", statusCode: 301 as const },
-  { source: "/inner-page", destination: "/", statusCode: 301 as const },
-  { source: "/portfolio-details", destination: "/", statusCode: 301 as const },
-  { source: "/blog", destination: "/", statusCode: 301 as const },
 ];

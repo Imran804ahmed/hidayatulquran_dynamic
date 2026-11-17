@@ -9,6 +9,13 @@ export const SITE = {
   whatsappNumber: "923365398542",
 } as const;
 
+/**
+ * Build for the staging/preview host (e.g. test.hidayatulquran.com): set SITE_ENV=staging at build
+ * time. Every page then gets noindex, robots.txt disallows all and the sitemap is omitted.
+ * Password-protect the host as well: these are backups, not access control.
+ */
+export const IS_STAGING = process.env.SITE_ENV === "staging";
+
 /** Favicon set (generated from the logo artwork). Used by every root layout: site, admin portal, 404. */
 export const SITE_ICONS = {
   icon: [

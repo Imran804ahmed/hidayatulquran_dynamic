@@ -9,14 +9,14 @@ import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import FloatingActions from "@/components/layout/FloatingActions";
 import SiteEffects from "@/components/layout/SiteEffects";
-import { SITE, SITE_ICONS } from "@/config/site";
+import { IS_STAGING, SITE, SITE_ICONS } from "@/config/site";
 import { fontVariables } from "@/styles/fonts";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   applicationName: SITE.name,
   authors: [{ name: SITE.name }],
-  robots: { index: true, follow: true },
+  robots: IS_STAGING ? { index: false, follow: false } : { index: true, follow: true },
   icons: SITE_ICONS,
 };
 

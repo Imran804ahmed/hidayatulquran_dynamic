@@ -4,6 +4,7 @@ import ExploreMain from "@/components/explore/ExploreMain";
 export const metadata = pageMetadata({
   path: "/explore",
   title: "Online Quran Courses — Noorani Qaida, Tajweed, Hifz and More | HidayatulQuran",
+  noindex: true,
   description: "Explore all online Quran courses at HidayatulQuran Academy — Noorani Qaida, Quran Reading, Tajweed, Hifz, Tafseer and Quranic Arabic. 1-on-1 live classes for kids and adults.",
 });
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { englishAlternates, pageMetadata } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
 import RegistrationForm from "@/components/forms/RegistrationForm";
 import styles from "./page.module.css";
 
@@ -11,7 +11,6 @@ export const metadata = pageMetadata({
   ogTitle: "Register for Online Quran Classes | HidayatulQuran Academy",
   ogDescription: "Sign up for live 1-on-1 online Quran classes. Choose your course and time slot. Free trial available — no payment required.",
   twitterDescription: "Sign up for live 1-on-1 online Quran classes. Free trial — no payment required. Kids and adults welcome.",
-  languages: englishAlternates("/registration"),
 });
 
 export default function Page() {
@@ -24,7 +23,7 @@ export default function Page() {
               <li><Link href="/">Home</Link></li>
               <li>Registration</li>
             </ol>
-            <h2><strong>Registration</strong></h2>
+            <h1 className={styles.pageTitle}><strong>Book a Free Trial Quran Class</strong></h1>
           </div>
         </section>
         <section id="blog" className="blog">

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { englishAlternates, pageMetadata } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
 import JsonLd from "@/components/seo/JsonLd";
 import styles from "./page.module.css";
 import SiteImage from "@/components/ui/SiteImage";
@@ -10,7 +10,6 @@ export const metadata = pageMetadata({
   description: "Learn about HidayatulQuran Academy — a trusted online Quran academy with certified male and female tutors offering 1-on-1 live Quran classes for kids and adults worldwide.",
   ogDescription: "Learn about HidayatulQuran Academy — certified male and female Quran tutors offering live 1-on-1 online Quran classes for kids and adults in USA, UK, Canada and worldwide.",
   twitterDescription: "Certified male and female Quran tutors offering live 1-on-1 online Quran classes for kids and adults in USA, UK, Canada and worldwide.",
-  languages: englishAlternates("/about"),
 });
 
 export default function Page() {

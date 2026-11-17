@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SITE, absoluteUrl } from "@/config/site";
+import { SITE, absoluteUrl, IS_STAGING } from "@/config/site";
 
 type PageSeo = {
   /** Site path of the page, e.g. "/about" (used for canonical and og:url). */
@@ -16,8 +16,10 @@ type PageSeo = {
   image?: string;
   /** Open Graph locale, e.g. "en_GB". */
   locale?: string;
-  /** hreflang alternates: { "en-gb": "/online-quran-classes-uk", ... }. */
+  /** hreflang alternates: { "en-gb": "/online-quran-classes-uk", ... }. Country cluster only. */
   languages?: Record<string, string>;
+  /** Keep the page out of search results (it stays crawlable so the noindex is seen). */
+  noindex?: boolean;
 };
 
 /** Builds the page metadata (title, description, canonical, Open Graph, Twitter) in one place. */
@@ -26,7 +28,8 @@ export function pageMetadata(seo: PageSeo): Metadata {
   return {
     title: seo.title,
     description: seo.description,
-    keywords: seo.keywords,
+    // `keywords` is accepted for reference but not emitted: search engines ignore the meta tag.
+    ...(seo.noindex || IS_STAGING ? { robots: { index: false, follow: !IS_STAGING } } : {}),
     alternates: {
       canonical: absoluteUrl(seo.path),
       languages: seo.languages
@@ -49,11 +52,6 @@ export function pageMetadata(seo: PageSeo): Metadata {
       images: [image],
     },
   };
-}
-
-/** hreflang map that points every English locale at the same page. */
-export function englishAlternates(path: string): Record<string, string> {
-  return Object.fromEntries(["en-us", "en-gb", "en-ca", "en-ae", "en-au", "x-default"].map((l) => [l, path]));
 }
 
 /** schema.org BreadcrumbList for a page under Home (› optional middle crumb). */

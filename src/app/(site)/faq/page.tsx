@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { englishAlternates, pageMetadata } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
 import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata = pageMetadata({
@@ -9,7 +9,6 @@ export const metadata = pageMetadata({
   ogDescription: "Answers to common questions about our online Quran classes — free trial, female tutors, Tajweed, scheduling, fees and more.",
   twitterTitle: "FAQ — Online Quran Classes | HidayatulQuran Academy",
   twitterDescription: "Common questions about our 1-on-1 online Quran classes answered — free trial, female tutors, Tajweed, scheduling and more.",
-  languages: englishAlternates("/faq"),
 });
 
 export default function Page() {

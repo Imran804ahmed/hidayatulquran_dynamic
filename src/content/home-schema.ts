@@ -36,13 +36,6 @@ export const organizationSchema = {
     }
   ],
   "email": "info@hidayatulquran.com",
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": 5,
-    "reviewCount": 50,
-    "bestRating": 5,
-    "worstRating": 1
-  },
   "hasOfferCatalog": {
     "@type": "OfferCatalog",
     "name": "Online Quran Courses",

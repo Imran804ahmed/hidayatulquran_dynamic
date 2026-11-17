@@ -29,7 +29,6 @@ export const PUBLIC_PAGES: SitemapEntry[] = [
   { path: "/enrollment-process", priority: 0.8, changeFrequency: "monthly" },
   { path: "/about", priority: 0.7, changeFrequency: "monthly" },
   { path: "/empowering-through-quranic-learning", priority: 0.7, changeFrequency: "monthly" },
-  { path: "/social-platforms", priority: 0.5, changeFrequency: "monthly" },
 ];
 
 /** Date the content (or URL) of the public pages last changed. Update when publishing changes. */

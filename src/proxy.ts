@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { GONE_PATHS } from "@/config/redirects";
 
 /**
  * Runs before routing:
@@ -16,6 +17,11 @@ export function proxy(request: NextRequest) {
   if (canonicalHost && (host !== canonicalHost || proto !== "https")) {
     const url = new URL(request.nextUrl.pathname + request.nextUrl.search, `https://${canonicalHost}`);
     return NextResponse.redirect(url, 301);
+  }
+
+  // Removed template demo pages: 410 Gone tells search engines to drop them for good.
+  if (GONE_PATHS.has(request.nextUrl.pathname.toLowerCase())) {
+    return new NextResponse("Gone", { status: 410, headers: { "content-type": "text/plain; charset=utf-8", "x-robots-tag": "noindex" } });
   }
 
   if (request.method === "POST") {

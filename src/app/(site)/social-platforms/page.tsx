@@ -1,4 +1,4 @@
-import { englishAlternates, pageMetadata } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
 import styles from "./page.module.css";
 import SiteImage from "@/components/ui/SiteImage";
 
@@ -10,7 +10,7 @@ export const metadata = pageMetadata({
   ogTitle: "Follow HidayatulQuran Academy on Social Media",
   ogDescription: "Follow HidayatulQuran Academy on YouTube, Facebook, and Instagram for daily Quran lessons, Islamic reminders, and live class updates.",
   twitterDescription: "Stay connected with HidayatulQuran Academy on YouTube, Facebook, and Instagram for Quran lessons and updates.",
-  languages: englishAlternates("/social-platforms"),
+  noindex: true,
 });
 
 export default function Page() {
