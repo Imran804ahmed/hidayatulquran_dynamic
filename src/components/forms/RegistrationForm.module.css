@@ -22,3 +22,20 @@
 .termsLabel input {
   margin-right: 8px;
 }
+
+.groupHeading {
+  margin: 8px 0 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--hq-border, #e3eadf);
+  color: var(--hq-navy, #082c4c);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.termsHeading {
+  margin-bottom: 5px;
+}
+
+.termsText p {
+  font-size: 13px;
+}

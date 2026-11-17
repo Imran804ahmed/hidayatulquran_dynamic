@@ -59,11 +59,14 @@ function MenuItem({ item, activeHref, mobile, onNavigate, depth = 0 }: {
     );
   }
 
-  // Dropdown: opens on hover on desktop (CSS), on tap/Enter in the mobile drawer.
+  // Dropdown: opens on hover or keyboard focus on desktop (CSS), on tap/Enter in the mobile drawer.
   const toggle = (e: MouseEvent) => {
     e.preventDefault();
     if (mobile) setOpen((o) => !o);
   };
+  // The parent is highlighted when the current page (or home section) is one of its links.
+  const hasActiveChild = (n: NavItem): boolean => ("href" in n ? n.href === activeHref : n.children.some(hasActiveChild));
+  const classes = [expanded && "expanded", activeHref && hasActiveChild(item) && "active"].filter(Boolean).join(" ");
   return (
     <li className="dropdown">
       <a
@@ -71,7 +74,7 @@ function MenuItem({ item, activeHref, mobile, onNavigate, depth = 0 }: {
         role="button"
         aria-haspopup="true"
         aria-expanded={expanded}
-        className={expanded ? "expanded" : undefined}
+        className={classes || undefined}
         onClick={toggle}
       >
         <span>{item.label}</span> <i className={`bi ${depth === 0 ? "bi-chevron-down" : "bi-chevron-right"}`} aria-hidden="true"></i>

@@ -3,27 +3,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./SubmitOverlays.module.css";
 
-/** Loader / success-popup state shared by the contact and registration forms. */
+/**
+ * Loader / success-dialog state shared by the contact and registration forms. The success dialog
+ * stays open until the visitor closes it (it used to vanish after 5 seconds, often before it was read).
+ */
 export function useSubmitFlow() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<{ message: string; shownAt: number } | null>(null);
-  const autoClose = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const closeSuccess = useCallback(() => {
-    setSuccess(null);
-    clearTimeout(autoClose.current);
-  }, []);
-
-  const showSuccess = useCallback(
-    (message: string) => {
-      clearTimeout(autoClose.current);
-      setSuccess({ message, shownAt: Date.now() }); // new key restarts the progress-bar animation
-      autoClose.current = setTimeout(closeSuccess, 5000);
-    },
-    [closeSuccess],
-  );
-
-  useEffect(() => () => clearTimeout(autoClose.current), []);
+  const closeSuccess = useCallback(() => setSuccess(null), []);
+  const showSuccess = useCallback((message: string) => setSuccess({ message, shownAt: Date.now() }), []);
 
   return { loading, setLoading, success, showSuccess, closeSuccess };
 }
@@ -37,13 +26,40 @@ type Props = {
   loadingText: string;
   title: string;
   defaultMessage: string;
+  /** Tells the visitor what happens after submitting. */
+  nextStep?: string;
 };
 
-/** Full-screen "sending…" loader and the auto-dismissing success dialog. */
-export function SubmitOverlays({ flow, idPrefix, popupPrefix, loadingText, title, defaultMessage }: Props) {
+/** Full-screen "sending…" loader and the success dialog (focus moves to "Done"; Escape closes). */
+export function SubmitOverlays({ flow, idPrefix, popupPrefix, loadingText, title, defaultMessage, nextStep }: Props) {
+  const doneRef = useRef<HTMLButtonElement>(null);
+  const returnFocus = useRef<HTMLElement | null>(null);
+  const open = Boolean(flow.success);
+  const { closeSuccess } = flow;
+
+  useEffect(() => {
+    if (!open) return;
+    returnFocus.current = document.activeElement as HTMLElement | null;
+    doneRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeSuccess();
+      // Only one focusable control: keep Tab inside the dialog.
+      if (e.key === "Tab") {
+        e.preventDefault();
+        doneRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      const target = returnFocus.current;
+      if (target && document.contains(target) && target !== document.body) target.focus();
+    };
+  }, [open, closeSuccess]);
+
   return (
     <>
-      <div id={`${idPrefix}-loader`} className={`${styles.overlay} ${styles.loader}`} hidden={!flow.loading}>
+      <div id={`${idPrefix}-loader`} className={`${styles.overlay} ${styles.loader}`} hidden={!flow.loading} role="status" aria-live="polite">
         <div className={styles.spinner}></div>
         <p className={styles.loadingText}>{loadingText}</p>
       </div>
@@ -63,10 +79,8 @@ export function SubmitOverlays({ flow, idPrefix, popupPrefix, loadingText, title
           </div>
           <h3 id={`${popupPrefix}-title`} className={styles.title}>{title}</h3>
           <p id={`${popupPrefix}-msg`} className={styles.message}>{flow.success?.message ?? defaultMessage}</p>
-          <div className={styles.progress}>
-            <div id={`${popupPrefix}-bar`} className={styles.bar}></div>
-          </div>
-          <button type="button" onClick={flow.closeSuccess} className={styles.done}>
+          {nextStep && <p className={styles.message}>{nextStep}</p>}
+          <button ref={doneRef} type="button" onClick={flow.closeSuccess} className={styles.done}>
             Done
           </button>
         </div>

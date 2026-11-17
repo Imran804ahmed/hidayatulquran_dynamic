@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { pageMetadata } from "@/lib/seo";
 import RegistrationForm from "@/components/forms/RegistrationForm";
+import { WHATSAPP_TRIAL } from "@/config/site";
 import styles from "./page.module.css";
 
 export const metadata = pageMetadata({
@@ -31,8 +32,14 @@ export default function Page() {
             <div className="row">
               <div className="blog-comments">
                 <div className="reply-form">
-                  <h4><strong>REGISTRATION FORM</strong></h4>
-                  <p>Your email address will not be published. Required fields are marked *</p>
+                  <h2 className="h4"><strong>Registration form</strong></h2>
+                  <p>
+                    Fill in this form and our team will contact you on WhatsApp or email to arrange your free trial class.
+                    No payment is required. Fields marked <span className="form-req" aria-hidden="true">*</span> are required.
+                  </p>
+                  <p className="small">
+                    Prefer to chat? <a href={WHATSAPP_TRIAL} target="_blank" rel="noopener noreferrer">Book your free trial on WhatsApp</a> instead.
+                  </p>
                   <RegistrationForm />
                 </div>
               </div>

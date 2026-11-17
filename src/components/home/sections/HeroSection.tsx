@@ -71,6 +71,9 @@ export default function HeroSection() {
                   {" "}
                   <span>Book Free Trial</span>
                 </a>
+                <Link href="/registration" className="hero-alt-link">
+                  Or register online <i className="bi bi-arrow-right" aria-hidden="true"></i>
+                </Link>
               </div>
             </div>
           </div>

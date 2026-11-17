@@ -4392,3 +4392,116 @@ input[type="button"],
 :where(img[data-nimg]) {
   height: auto;
 }
+
+/*--------------------------------------------------------------
+# Keyboard access to desktop dropdowns
+--------------------------------------------------------------*/
+/* Desktop sub-menus opened on hover only; keyboard users could not reach their links. */
+.navbar .dropdown:focus-within > ul {
+  opacity: 1;
+  top: 100%;
+  visibility: visible;
+}
+
+/*--------------------------------------------------------------
+# Public forms: required markers, hints and inline errors
+--------------------------------------------------------------*/
+.form-req {
+  margin-left: 2px;
+  color: #b42318;
+}
+
+.form-hint {
+  display: block;
+  margin-top: 4px;
+  color: var(--hq-muted);
+  font-size: 0.85rem;
+}
+
+.form-field-error {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  margin-top: 4px;
+  color: #b42318;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.php-email-form [aria-invalid="true"] {
+  border-color: #b42318 !important;
+  box-shadow: 0 0 0 1px #b42318;
+}
+
+.form-summary {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border: 1px solid #f4b4ae;
+  border-left: 4px solid #b42318;
+  border-radius: 6px;
+  background: #fef3f2;
+  color: #7a1a12;
+  font-weight: 600;
+}
+
+.form-summary:focus {
+  outline: 2px solid var(--hq-gold);
+  outline-offset: 2px;
+}
+
+.form-summary p {
+  margin: 0;
+}
+
+.form-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.form-fieldset legend {
+  float: none;
+  width: auto;
+  margin-bottom: 6px;
+  color: var(--hq-navy);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+#days-container input:disabled + span {
+  color: #9aa5ad;
+}
+
+.contact .php-email-form label.form-label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--hq-navy);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.hero-alt-link {
+  display: block;
+  margin-top: 14px;
+  color: var(--hq-navy);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.hero-alt-link:hover,
+.hero-alt-link:focus {
+  color: var(--hq-green);
+}
+
+@media (min-width: 992px) {
+  .hero-alt-link {
+    display: inline-block;
+    margin-top: 0;
+    margin-left: 18px;
+  }
+}
