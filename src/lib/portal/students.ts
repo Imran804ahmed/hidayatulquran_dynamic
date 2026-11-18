@@ -1,6 +1,7 @@
 import "server-only";
 import * as db from "./db";
 import { isYmd, localDayStartUtc, addDays } from "./time";
+import { ensureWebsiteCourses } from "./website-courses";
 
 export type StudentRow = {
   id: number; ref_no: string; full_name: string; age: number | null; guardian_name: string | null; email: string | null;
@@ -107,7 +108,8 @@ export function notesFor(type: string, id: number) {
   );
 }
 
-export function activeCourses() {
+export async function activeCourses() {
+  await ensureWebsiteCourses();
   return db.all<{ id: number; name: string; status: string }>("SELECT id, name, status FROM hq_courses ORDER BY status = 'active' DESC, sort_order, name");
 }
 

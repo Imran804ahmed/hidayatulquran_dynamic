@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PORTAL, can, requirePage } from "@/lib/portal/auth";
 import * as db from "@/lib/portal/db";
+import { ensureWebsiteCourses } from "@/lib/portal/website-courses";
 import { countryName, daysLabel, packageName, PLANS } from "@/lib/portal/lookups";
 import { registrationDuplicates, type RegistrationRow } from "@/lib/portal/registrations";
 import { teacherOptions } from "@/lib/portal/students";
@@ -29,7 +30,7 @@ export default async function ConvertPage({ params }: { params: Promise<{ id: st
   }
   const [dups, courses, teachers] = await Promise.all([
     registrationDuplicates(r),
-    db.all<{ id: number; name: string }>("SELECT id, name FROM hq_courses WHERE status = 'active' ORDER BY sort_order, name"),
+    ensureWebsiteCourses().then(() => db.all<{ id: number; name: string }>("SELECT id, name FROM hq_courses WHERE status = 'active' ORDER BY sort_order, name")),
     teacherOptions(false),
   ]);
   return (

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PORTAL, can, requirePage } from "@/lib/portal/auth";
 import * as db from "@/lib/portal/db";
+import { ensureWebsiteCourses } from "@/lib/portal/website-courses";
 import { Badge, EmptyState, Icon, PageHeader, type Params } from "@/components/portal/ui";
 
 export const metadata: Metadata = { title: "Courses" };
@@ -10,6 +11,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
   const user = await requirePage("courses.view", `${PORTAL}/courses`);
   const { status } = await searchParams;
   const filter = status === "active" || status === "inactive" ? status : "";
+  await ensureWebsiteCourses();
   const rows = await db.all<{ id: number; name: string; summary: string | null; public_url: string | null; status: string; live: number; teachers: number; total: number }>(
     `SELECT c.id, c.name, c.summary, c.public_url, c.status,
        (SELECT COUNT(*) FROM hq_enrolments e WHERE e.course_id = c.id AND e.status IN ('pending','active','paused')) AS live,

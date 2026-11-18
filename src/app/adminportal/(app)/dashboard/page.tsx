@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PORTAL, can, requirePage } from "@/lib/portal/auth";
 import * as db from "@/lib/portal/db";
+import { ensureWebsiteCourses } from "@/lib/portal/website-courses";
 import { getSettings } from "@/lib/portal/settings";
 import { fmtTime, localYmd, relativeTime, addDays } from "@/lib/portal/time";
 import { resolveRange, trend } from "@/lib/portal/trends";
@@ -54,7 +55,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Sp }) 
     canTea ? statusCounts("hq_teachers") : null,
     canReg ? statusCounts("hq_registrations") : null,
     canEnq ? statusCounts("hq_enquiries") : null,
-    canCourses ? db.count("SELECT COUNT(*) FROM hq_courses WHERE status = 'active'") : 0,
+    canCourses ? ensureWebsiteCourses().then(() => db.count("SELECT COUNT(*) FROM hq_courses WHERE status = 'active'")) : 0,
     canReg ? regCount({ status: "approved" }) : 0,
     canReg ? regCount({ status: "open", followup: "overdue" }) : 0,
     canEnq ? enqCount({ status: "open", unread: "1" }) : 0,

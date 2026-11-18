@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PORTAL, can, requirePage } from "@/lib/portal/auth";
 import * as db from "@/lib/portal/db";
+import { ensureWebsiteCourses } from "@/lib/portal/website-courses";
 import { academyTimezone } from "@/lib/portal/settings";
 import { addDays, isYmd, localDayStartUtc, localYmd } from "@/lib/portal/time";
 import { ENQ_STATUS, REG_STATUS, RECORD_STATUS, countryName, packageName, statusLabel } from "@/lib/portal/lookups";
@@ -45,9 +46,9 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
     can(user, "registrations.view") ? group("SELECT package AS k, COUNT(*) AS n FROM hq_registrations WHERE submitted_at >= ? AND submitted_at < ? GROUP BY package ORDER BY n DESC", range) : [],
     can(user, "registrations.view") ? group("SELECT country AS k, COUNT(*) AS n FROM hq_registrations WHERE submitted_at >= ? AND submitted_at < ? GROUP BY country ORDER BY n DESC", range) : [],
     can(user, "enquiries.view") ? group("SELECT status AS k, COUNT(*) AS n FROM hq_enquiries WHERE submitted_at >= ? AND submitted_at < ? GROUP BY status ORDER BY n DESC", range) : [],
-    can(user, "courses.view") ? db.all<{ id: number; name: string; live: number; completed: number; withdrawn: number }>(
+    can(user, "courses.view") ? ensureWebsiteCourses().then(() => db.all<{ id: number; name: string; live: number; completed: number; withdrawn: number }>(
       `SELECT c.id, c.name, SUM(e.status IN ('pending','active','paused')) AS live, SUM(e.status = 'completed') AS completed, SUM(e.status = 'withdrawn') AS withdrawn
-         FROM hq_courses c LEFT JOIN hq_enrolments e ON e.course_id = c.id GROUP BY c.id, c.name ORDER BY live DESC, c.sort_order`) : [],
+         FROM hq_courses c LEFT JOIN hq_enrolments e ON e.course_id = c.id GROUP BY c.id, c.name ORDER BY live DESC, c.sort_order`)) : [],
     can(user, "courses.view") ? db.all<{ id: number; full_name: string; status: string; live: number; slots: number }>(
       `SELECT t.id, t.full_name, t.status, COUNT(DISTINCT e.id) AS live,
          (SELECT COUNT(*) FROM hq_class_slots cs JOIN hq_enrolments e2 ON e2.id = cs.enrolment_id WHERE e2.teacher_id = t.id AND cs.status = 'scheduled' AND e2.status IN ('pending','active')) AS slots
