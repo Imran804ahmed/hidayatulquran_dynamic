@@ -12,6 +12,7 @@ export const PERMISSION_MATRIX = {
     "students.create": "Add students",
     "students.edit": "Edit students, activate / deactivate",
     "students.archive": "Archive / restore students",
+    "students.delete": "Permanently delete students with their enrolments (sensitive)",
     "students.export": "Export students (CSV)",
   },
   Teachers: {

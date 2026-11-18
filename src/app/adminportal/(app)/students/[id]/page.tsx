@@ -11,7 +11,7 @@ import { countryName, daysLabel, packageName } from "@/lib/portal/lookups";
 import { enrolmentsFor, notesFor, type StudentRow } from "@/lib/portal/students";
 import { Avatar, Badge, DefinitionList, EmptyState, Icon, whatsappHref } from "@/components/portal/ui";
 import { BackToList } from "@/components/portal/shell";
-import { StudentStatusPanel, type StatusOption } from "@/components/portal/records";
+import { DeleteStudentButton, StudentStatusPanel, type StatusOption } from "@/components/portal/records";
 import { HistoryCard, NotesCard } from "@/components/portal/record-parts";
 
 export const metadata: Metadata = { title: "Student" };
@@ -46,7 +46,7 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
       confirm: `Archive ${s.full_name}? The record is hidden from the default list but kept with its full history. It can be restored later.` });
   }
   const impact = s.status === "active"
-    ? `Impact of deactivating or archiving: ${live.length} current enrolment(s) and ${liveSlots} weekly class slot(s). Records are never deleted; class slots of inactive or archived students are hidden from the timetable and no new enrolments can be added until the student is active again.`
+    ? `Impact of deactivating or archiving: ${live.length} current enrolment(s) and ${liveSlots} weekly class slot(s). Archived records are kept; class slots of inactive or archived students are hidden from the timetable and no new enrolments can be added until the student is active again.`
     : `This student is ${s.status}. Their classes are not shown in the timetable. Activate the record to resume.`;
 
   return (
@@ -124,6 +124,15 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
             <section className="card" aria-labelledby="status-title">
               <div className="card-head"><h2 id="status-title"><Icon name="toggle-on" /> Record status</h2><Badge status={s.status} /></div>
               <div className="card-body"><StudentStatusPanel id={s.id} from={s.status} options={options} impact={impact} /></div>
+            </section>
+          )}
+          {can(user, "students.delete") && (
+            <section className="card" aria-labelledby="delete-title">
+              <div className="card-head"><h2 id="delete-title"><Icon name="trash" /> Delete student</h2></div>
+              <div className="card-body">
+                <DeleteStudentButton id={s.id} name={s.full_name}
+                  impact={`Removes this record, its notes and ${enrolments.length} enrolment(s) with their weekly class times.${source ? ` Registration ${source.ref_no} goes back to Approved.` : ""} To keep the history instead, use Archive.`} />
+              </div>
             </section>
           )}
           <HistoryCard history={history} audit={auditRows} tz={tz} />

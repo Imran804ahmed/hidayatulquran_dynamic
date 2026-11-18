@@ -163,7 +163,8 @@ Migration `db/migrations/001_portal_schema.sql` (InnoDB, utf8mb4, UTC timestamps
 and indexes on searched columns). All tables are prefixed `hq_`:
 
 `hq_users`, `hq_user_permissions`, `hq_sessions` (hashed tokens), `hq_rate_events`,
-`hq_password_resets` (hashed, single use, 60 min), `hq_settings`, `hq_courses` (6 seeded),
+`hq_password_resets` (hashed, single use, 60 min), `hq_settings`, `hq_courses` (the website's courses
+are listed in `src/lib/portal/website-courses.ts` and added automatically if missing; admin edits are kept),
 `hq_teachers`, `hq_students`, `hq_enrolments`, `hq_class_slots`, `hq_registrations`,
 `hq_enquiries`, `hq_notes` (private), `hq_status_history`, `hq_audit_log`, `hq_migrations`.
 
@@ -321,7 +322,10 @@ the production database schema, screen-reader walkthrough, Safari/Firefox.
 - Secrets only in environment variables. Audit log never stores passwords, tokens, note or message text.
 - Portal pages send `X-Robots-Tag: noindex`, `X-Frame-Options: DENY`, `Referrer-Policy: same-origin`.
 - No file uploads, so no upload storage is needed.
-- Records are archived, not deleted; there is no permanent-delete action in the UI.
+- Records are normally archived, not deleted. The one exception is students: users with the
+  `students.delete` permission (Super Admins by default) can permanently delete a student from the
+  student page. This removes the student's enrolments, weekly class times, notes and status history,
+  returns a linked registration to Approved, and leaves a `student.deleted` entry in the audit log.
 
 ## 14. Limitations and future work
 

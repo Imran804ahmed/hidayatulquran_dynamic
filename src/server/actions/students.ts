@@ -112,3 +112,42 @@ export async function studentStatusAction(prev: ActionState, fd: FormData): Prom
     return { redirectTo: `${PORTAL}/students/${id}`, flash: `Student ${rule.verb.toLowerCase()}. History has been recorded.` };
   });
 }
+
+/**
+ * Permanently deletes a student with their enrolments, weekly class times, notes and status
+ * history. A registration the student was converted from goes back to Approved so it can be
+ * converted again. The audit log keeps a record of the deletion.
+ */
+export async function deleteStudentAction(prev: ActionState, fd: FormData): Promise<ActionState> {
+  return runAction(prev, fd, async () => {
+    const user = await requireAction("students.delete");
+    const id = int(fd, "id");
+    if (!id) return { message: "Unknown student." };
+    const summary = await db.transaction(async (conn) => {
+      const s = await db.one<{ full_name: string; ref_no: string | null }>("SELECT full_name, ref_no FROM hq_students WHERE id = ? FOR UPDATE", [id], conn);
+      if (!s) throw new db.UserError("This student no longer exists.");
+      const enrolIds = (await db.all<{ id: number }>("SELECT id FROM hq_enrolments WHERE student_id = ?", [id], conn)).map((e) => e.id);
+      if (enrolIds.length) {
+        const marks = enrolIds.map(() => "?").join(", ");
+        await db.exec(`DELETE FROM hq_class_slots WHERE enrolment_id IN (${marks})`, enrolIds, conn);
+        await db.exec(`DELETE FROM hq_notes WHERE entity_type = 'enrolment' AND entity_id IN (${marks})`, enrolIds, conn);
+        await db.exec(`DELETE FROM hq_status_history WHERE entity_type = 'enrolment' AND entity_id IN (${marks})`, enrolIds, conn);
+        await db.exec("DELETE FROM hq_enrolments WHERE student_id = ?", [id], conn);
+      }
+      const now = db.nowUtc();
+      const regs = await db.all<{ id: number; status: string }>("SELECT id, status FROM hq_registrations WHERE student_id = ? FOR UPDATE", [id], conn);
+      for (const r of regs) {
+        const to = r.status === "enrolled" ? "approved" : r.status;
+        await db.exec("UPDATE hq_registrations SET student_id = NULL, converted_at = NULL, converted_by = NULL, status = ?, version = version + 1, updated_at = ? WHERE id = ?", [to, now, r.id], conn);
+        if (to !== r.status) await statusHistory("registration", r.id, r.status, to, `Student ${s.ref_no ?? ""} ${s.full_name} was deleted`.replace(/\s+/g, " "), user.id, conn);
+      }
+      await db.exec("DELETE FROM hq_notes WHERE entity_type = 'student' AND entity_id = ?", [id], conn);
+      await db.exec("DELETE FROM hq_status_history WHERE entity_type = 'student' AND entity_id = ?", [id], conn);
+      await db.exec("DELETE FROM hq_students WHERE id = ?", [id], conn);
+      const text = `Deleted student ${s.ref_no ?? `#${id}`} ${s.full_name} (${enrolIds.length} enrolment(s)${regs.length ? `; ${regs.length} registration(s) unlinked` : ""})`;
+      await audit(user.id, "student.deleted", text, "student", id, conn);
+      return `${s.full_name} has been deleted.`;
+    });
+    return { redirectTo: `${PORTAL}/students`, flash: summary };
+  });
+}

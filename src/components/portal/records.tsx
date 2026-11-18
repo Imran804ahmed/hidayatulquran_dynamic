@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ActionForm, Checkbox, CheckboxGroup, Hidden, SelectField, SubmitButton, TextArea, TextField, useFormCtx } from "./forms";
-import { saveStudentAction, studentStatusAction } from "@/server/actions/students";
+import { deleteStudentAction, saveStudentAction, studentStatusAction } from "@/server/actions/students";
 import { addNoteAction } from "@/server/actions/notes";
 import { COUNTRIES, DAYS } from "@/lib/portal/lookups";
 import type { ActionState } from "@/lib/portal/form-types";
@@ -113,6 +113,20 @@ export function StatusPanel({ action, id, from, version, options, impact }: {
 
 export function StudentStatusPanel(props: { id: number; from: string; options: StatusOption[]; impact?: string }) {
   return <StatusPanel action={studentStatusAction} {...props} />;
+}
+
+/** Permanent delete of a student record, behind a confirmation dialog. */
+export function DeleteStudentButton({ id, name, impact }: { id: number; name: string; impact: string }) {
+  return (
+    <ActionForm action={deleteStudentAction} guard={false}>
+      <Hidden name="id" value={id} />
+      <p className="small muted">{impact}</p>
+      <div className="row-gap">
+        <SubmitButton variant="danger" size="sm" icon="trash" danger pendingLabel="Deleting…" confirmTitle="Delete student permanently?"
+          confirm={`Delete ${name}? ${impact} This cannot be undone.`} confirmOk="Delete permanently">Delete student</SubmitButton>
+      </div>
+    </ActionForm>
+  );
 }
 
 export function NoteForm({ type, id }: { type: string; id: number }) {
