@@ -1,0 +1,226 @@
+.header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.97);
+  border-bottom: 1px solid var(--hq-c-border);
+  box-shadow: 0 1px 0 rgba(215, 165, 63, 0.3);
+  font-family: var(--hq-font-body);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: var(--hq-header-h);
+  max-width: calc(var(--hq-max) + 2 * var(--hq-gutter));
+  margin: 0 auto;
+  padding: 0 var(--hq-gutter);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  text-decoration: none;
+  color: var(--hq-c-dark);
+}
+
+.brand:hover { color: var(--hq-c-dark); }
+
+.logo {
+  width: 44px;
+  height: 44px;
+  flex: none;
+}
+
+/* "Hidayatul Quran Academy" stays readable beside the logo at every width (two lines on phones). */
+.brandName {
+  font-family: var(--hq-font-head);
+  font-weight: 600;
+  font-size: 1.1875rem;
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+  color: var(--hq-c-dark);
+  white-space: nowrap;
+}
+
+.brandAcademy { color: var(--hq-c-gold-text); }
+
+@media (max-width: 639px) {
+  .brandName { white-space: normal; font-size: 1.0625rem; }
+  .brandAcademy { display: block; }
+}
+
+.desktopNav {
+  display: none;
+  margin-left: auto;
+}
+
+.navList {
+  display: flex;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navLink {
+  display: inline-block;
+  padding: 10px 12px;
+  border-radius: var(--hq-radius-sm);
+  font-family: var(--hq-font-label);
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--hq-c-ink);
+  text-decoration: none;
+}
+
+.navLink:hover {
+  color: var(--hq-c-link);
+  background: var(--hq-c-tint);
+}
+
+.navLink[aria-current="page"] {
+  color: var(--hq-c-dark);
+  font-weight: 600;
+  box-shadow: inset 0 -3px 0 var(--hq-c-gold);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.register { white-space: nowrap; }
+
+.menuButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--hq-c-border-strong);
+  border-radius: var(--hq-radius-sm);
+  background: #fff;
+  color: var(--hq-c-dark);
+  font-family: var(--hq-font-label);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.menuIcon {
+  display: inline-grid;
+  gap: 4px;
+  width: 18px;
+}
+
+.menuIcon span {
+  display: block;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.menuIcon[data-open="true"] span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.menuIcon[data-open="true"] span:nth-child(2) { opacity: 0; }
+.menuIcon[data-open="true"] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+/* Mobile menu panel: drops in below the bar. When closed it is visibility:hidden, which also
+   removes it from the tab order and the accessibility tree; the visibility change is delayed on
+   close so the fade can finish. */
+.mobileNav {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  border-top: 1px solid var(--hq-c-border);
+  background: #fff;
+  max-height: calc(100vh - var(--hq-header-h));
+  max-height: calc(100dvh - var(--hq-header-h));
+  overflow-y: auto;
+  box-shadow: var(--hq-shadow);
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    opacity var(--hq-dur) var(--hq-ease),
+    transform var(--hq-dur) var(--hq-ease),
+    visibility 0s linear var(--hq-dur);
+}
+
+.mobileNav[data-open="true"] {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--hq-dur) var(--hq-ease),
+    transform var(--hq-dur) var(--hq-ease),
+    visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobileNav,
+  .mobileNav[data-open="true"] {
+    transform: none;
+    transition: none;
+  }
+}
+
+.mobileList {
+  list-style: none;
+  margin: 0;
+  padding: 8px var(--hq-gutter);
+}
+
+.mobileLink {
+  display: block;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--hq-c-border);
+  font-family: var(--hq-font-label);
+  font-weight: 500;
+  font-size: 1.0625rem;
+  color: var(--hq-c-ink);
+  text-decoration: none;
+}
+
+.mobileLink[aria-current="page"] {
+  color: var(--hq-c-dark);
+  font-weight: 600;
+  box-shadow: inset 4px 0 0 var(--hq-c-gold);
+  padding-left: 14px;
+}
+
+.mobileCtas {
+  display: grid;
+  gap: 10px;
+  padding: 8px var(--hq-gutter) 20px;
+}
+
+/* Small phones: logo + name, Register and an icon-only Menu button on one line. */
+@media (max-width: 399px) {
+  .brandName { font-size: 0.9375rem; }
+  .logo { width: 40px; height: 40px; }
+  .bar { gap: 8px; }
+  .brand { gap: 8px; }
+  .menuButton { padding: 8px; }
+  .menuButton > span:last-child { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+}
+
+/* Narrowest phones: Register moves into the menu (it is also in the first screen of every page). */
+@media (max-width: 359px) {
+  .register { display: none; }
+}
+
+@media (min-width: 1024px) {
+  .desktopNav { display: block; }
+  .actions { margin-left: 8px; }
+  .menuButton { display: none; }
+  .mobileNav { display: none; }
+}

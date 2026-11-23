@@ -1,25 +1,67 @@
-/* Styles for src/app/(site)/registration/page.tsx. Scoped to the element with
-   className={styles.page}; :where() keeps the original selector specificity. */
+.page { background: var(--hq-c-surface); }
 
-:where(.page) :global(.reply-form label) {
-  transition: all 0.3s ease;
-  font-size: 14px;
-  color: #012970;
+.head { padding: 32px 0 36px; }
+
+@media (min-width: 992px) {
+  .head { padding: 48px 0 52px; }
 }
 
-:where(.page) :global(.reply-form label:hover) {
-  color: #012970;
-  font-size: 15px;
+.lead { max-width: 60ch; }
+
+.layout {
+  display: grid;
+  gap: 24px;
+  padding-top: 32px;
+  padding-bottom: 72px;
 }
 
-/* Page H1 in the breadcrumb bar: same look as the breadcrumb h2 on the other pages. */
-.pageTitle {
-  font-size: 28px;
-  font-weight: 500;
-}
-
-@media (max-width: 575px) {
-  .pageTitle {
-    font-size: 1.5rem;
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 40px;
+    align-items: start;
   }
+  .aside { position: sticky; top: calc(var(--hq-header-h) + 24px); }
+}
+
+.formCol { min-width: 0; }
+
+.aside {
+  display: grid;
+  gap: 20px;
+}
+
+.panel {
+  padding: 22px;
+  background: #fff;
+  border: 1px solid var(--hq-c-border);
+  border-radius: var(--hq-radius);
+}
+
+.panelTitle {
+  font-family: var(--hq-font-head);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--hq-c-dark);
+  margin: 0 0 14px;
+}
+
+.help {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.help a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  color: var(--hq-c-link);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
 }

@@ -6,7 +6,7 @@ type Redirect = { source: string; destination: string; statusCode: 301 };
  */
 const renamed: Record<string, string> = {
   index: "/",
-  Explore: "/explore",
+  Explore: "/courses",
   socialPlatforms: "/social-platforms",
 };
 
@@ -40,7 +40,9 @@ const pages = [
 export const legacyRedirects: Redirect[] = [
   ...Object.entries(renamed).map(([from, to]) => ({ source: `/${from}.html`, destination: to, statusCode: 301 as const })),
   ...pages.map((p) => ({ source: `/${p}.html`, destination: `/${p}`, statusCode: 301 as const })),
-  // Old paths without the extension. (No "/Explore" -> "/explore" rule: Next matches redirect
-  // sources case-insensitively, so it would loop.)
+  // The old course explorer is now the course listing. Next matches redirect sources
+  // case-insensitively, so this also covers "/Explore".
+  { source: "/explore", destination: "/courses", statusCode: 301 as const },
+  // Old paths without the extension.
   { source: "/socialPlatforms", destination: "/social-platforms", statusCode: 301 as const },
 ];

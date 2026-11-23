@@ -1,0 +1,78 @@
+.countries {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.country {
+  min-height: 44px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--hq-c-border-strong);
+  background: #fff;
+  color: var(--hq-c-ink);
+  font-family: var(--hq-font-head);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.country:hover { border-color: var(--hq-c-link); color: var(--hq-c-link); }
+
+.country[aria-pressed="true"] {
+  background: var(--hq-c-dark);
+  border-color: var(--hq-c-dark);
+  color: #fff;
+}
+
+.plans {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.plan {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid var(--hq-c-border);
+  border-radius: var(--hq-radius);
+  box-shadow: var(--hq-shadow-sm);
+}
+
+.featured {
+  border: 2px solid var(--hq-c-link);
+}
+
+.planName {
+  font-family: var(--hq-font-head);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--hq-c-dark);
+  margin: 0;
+}
+
+.planName span {
+  font-weight: 600;
+  color: var(--hq-c-muted);
+  font-size: 1rem;
+}
+
+.price { margin: 0; color: var(--hq-c-dark); }
+.currency { font-weight: 700; font-size: 1rem; }
+.amount { font-family: var(--hq-font-head); font-size: 2.5rem; font-weight: 700; line-height: 1; }
+.per { color: var(--hq-c-muted); font-size: 0.9375rem; }
+
+.features { font-size: 0.9375rem; flex: 1; }
+
+/* The amount fades in again when the country changes (re-keyed in PricingTable.tsx). */
+.amount { display: inline-block; }
+
+.country {
+  transition: background-color var(--hq-dur-fast) ease, color var(--hq-dur-fast) ease, border-color var(--hq-dur-fast) ease;
+}

@@ -6,7 +6,7 @@ export const organizationSchema = {
   "name": "HidayatulQuran Academy",
   "description": "Online Quran Academy offering one-to-one live Quran classes with certified male and female tutors for kids and adults worldwide",
   "url": "https://www.hidayatulquran.com",
-  "logo": "https://www.hidayatulquran.com/assets/img/hidayatulquran1.png",
+  "logo": "https://www.hidayatulquran.com/assets/img/hidayatulquran-logo.png",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Shahfaisal Colony, Near Airport",

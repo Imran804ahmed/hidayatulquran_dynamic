@@ -17,7 +17,14 @@ export default function SiteEffects() {
   useEffect(() => {
     import("bootstrap");
     aos ??= import("aos").then(({ default: AOS }) => {
-      AOS.init({ duration: 1000, easing: "ease-in-out", once: true, mirror: false });
+      // Timing matches the redesign (600 ms, calm ease-out); off for visitors who prefer reduced motion.
+      AOS.init({
+        duration: 600,
+        easing: "ease-out-cubic",
+        once: true,
+        mirror: false,
+        disable: () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+      });
       return AOS;
     });
   }, []);

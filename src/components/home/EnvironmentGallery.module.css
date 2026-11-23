@@ -1,0 +1,67 @@
+/* Gallery: 3 photos then 2 wider ones on desktop; 2 columns (first photo full width) on phones. */
+.gallery {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item:first-child { grid-column: 1 / -1; }
+
+@media (min-width: 900px) {
+  .gallery {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
+  }
+  .item { grid-column: span 2; }
+  .item:first-child { grid-column: span 2; }
+  .item:nth-child(n + 4) { grid-column: span 3; }
+}
+
+/* Card frame copied from the live site (#learning-environment .environment-card in site.css):
+   6px gold-tinted frame, gradient white-to-cream, 18px corners, lift on hover. The photos keep
+   their own 3:2 ratio here, so they are shown whole (the live slider crops them to 4:3). */
+.figure {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(166, 111, 20, 0.28);
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ffffff 0%, #f7ecd3 100%);
+  box-shadow: 0 14px 34px rgba(8, 44, 76, 0.12);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  border-radius: 13px;
+  object-fit: cover;
+  transition: transform 0.45s ease;
+}
+
+.figure:hover {
+  transform: translateY(-6px);
+  border-color: rgba(166, 111, 20, 0.62);
+  box-shadow: 0 22px 42px rgba(8, 44, 76, 0.18);
+}
+
+.figure:hover .image { transform: scale(1.05); }
+
+@media (max-width: 576px) {
+  .figure {
+    padding: 5px;
+    border-radius: 14px;
+  }
+  .image { border-radius: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .figure:hover,
+  .figure:hover .image { transform: none; }
+}

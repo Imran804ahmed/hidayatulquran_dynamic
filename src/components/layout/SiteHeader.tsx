@@ -2,166 +2,126 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, type MouseEvent } from "react";
-import { createPortal } from "react-dom";
-import { HOME_SECTIONS, MAIN_NAV, type NavItem } from "@/config/navigation";
+import { useEffect, useRef, useState } from "react";
+import { MAIN_NAV } from "@/config/navigation";
 import { SITE } from "@/config/site";
-import { useScrolledPast } from "@/hooks/useScrolledPast";
 import SiteImage from "@/components/ui/SiteImage";
+import styles from "./SiteHeader.module.css";
 
-const MOBILE_BREAKPOINT = 991;
+/** A course page counts as being "in" Courses for the menu highlight. */
+const COURSE_PATHS = ["/courses", "/noorani-qaida-online", "/quran-reading-course-online", "/quran-tajweed-course-online", "/quran-memorization-hifz-online", "/tafseer-quran-course-online", "/quranic-arabic-course-online"];
 
-/** Which menu link is "active": by page, or on the home page by the section in view. */
-function useActiveHref() {
-  const pathname = usePathname();
-  const [homeSection, setHomeSection] = useState("/");
-
-  useEffect(() => {
-    if (pathname !== "/") return;
-    const update = () => {
-      const position = window.scrollY + 200;
-      let active = "";
-      for (const [id, href] of Object.entries(HOME_SECTIONS)) {
-        const el = document.getElementById(id);
-        if (el && position >= el.offsetTop && position <= el.offsetTop + el.offsetHeight) active = href;
-      }
-      setHomeSection(active);
-    };
-    const frame = requestAnimationFrame(update);
-    document.addEventListener("scroll", update, { passive: true });
-    return () => {
-      cancelAnimationFrame(frame);
-      document.removeEventListener("scroll", update);
-    };
-  }, [pathname]);
-
-  return pathname === "/" ? homeSection : pathname;
+function isCurrent(href: string, pathname: string) {
+  if (href === "/courses") return COURSE_PATHS.includes(pathname);
+  return !href.includes("#") && href === pathname;
 }
 
-function MenuItem({ item, activeHref, mobile, onNavigate, depth = 0 }: {
-  item: NavItem;
-  depth?: number;
-  activeHref: string;
-  mobile: boolean;
-  onNavigate: () => void;
-}) {
-  const [open, setOpen] = useState(false);
-  // Sub-menus only expand inside the mobile drawer.
-  const expanded = mobile && open;
-
-  if ("href" in item) {
-    return (
-      <li>
-        <Link href={item.href} className={item.href === activeHref ? "active" : undefined} onClick={onNavigate}>
-          {item.label}
-        </Link>
-      </li>
-    );
-  }
-
-  // Dropdown: opens on hover or keyboard focus on desktop (CSS), on tap/Enter in the mobile drawer.
-  const toggle = (e: MouseEvent) => {
-    e.preventDefault();
-    if (mobile) setOpen((o) => !o);
-  };
-  // The parent is highlighted when the current page (or home section) is one of its links.
-  const hasActiveChild = (n: NavItem): boolean => ("href" in n ? n.href === activeHref : n.children.some(hasActiveChild));
-  const classes = [expanded && "expanded", activeHref && hasActiveChild(item) && "active"].filter(Boolean).join(" ");
-  return (
-    <li className="dropdown">
-      <a
-        href="#"
-        role="button"
-        aria-haspopup="true"
-        aria-expanded={expanded}
-        className={classes || undefined}
-        onClick={toggle}
-      >
-        <span>{item.label}</span> <i className={`bi ${depth === 0 ? "bi-chevron-down" : "bi-chevron-right"}`} aria-hidden="true"></i>
-      </a>
-      <ul className={expanded ? "dropdown-active" : undefined}>
-        {item.children.map((child) => (
-          <MenuItem key={child.label} item={child} depth={depth + 1} activeHref={activeHref} mobile={mobile} onNavigate={onNavigate} />
-        ))}
-      </ul>
-    </li>
-  );
-}
-
+/**
+ * Fixed site header. On narrow screens the menu collapses behind a "Menu" disclosure button:
+ * the panel opens below the header, Escape closes it and returns focus to the button, and it
+ * closes on navigation. "Register" stays visible at every width.
+ */
 export default function SiteHeader() {
   const pathname = usePathname();
-  const scrolled = useScrolledPast(100);
-  const activeHref = useActiveHref();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const close = () => setMobileOpen(false);
-
-  // Close the drawer when the route changes (including browser back/forward).
-  const [drawerPath, setDrawerPath] = useState(pathname);
-  if (drawerPath !== pathname) {
-    setDrawerPath(pathname);
-    setMobileOpen(false);
+  // Close the menu when the route changes (including browser back/forward).
+  const [menuPath, setMenuPath] = useState(pathname);
+  if (menuPath !== pathname) {
+    setMenuPath(pathname);
+    setOpen(false);
   }
 
-  // Close on Escape and when resizing to desktop; lock page scroll while open.
   useEffect(() => {
-    if (!mobileOpen) return;
-    document.body.classList.add("mobile-nav-open");
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
-    const onResize = () => window.innerWidth > MOBILE_BREAKPOINT && close();
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        buttonRef.current?.focus();
+      }
+    };
+    const onResize = () => window.matchMedia("(min-width: 1024px)").matches && setOpen(false);
     document.addEventListener("keydown", onKey);
     window.addEventListener("resize", onResize);
     return () => {
-      document.body.classList.remove("mobile-nav-open");
       document.removeEventListener("keydown", onKey);
       window.removeEventListener("resize", onResize);
     };
-  }, [mobileOpen]);
+  }, [open]);
 
-  const toggleButton = (
-    <button
-      className={`mobile-nav-toggle bi ${mobileOpen ? "bi-x" : "bi-list"}`}
-      type="button"
-      aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
-      aria-controls="navbar"
-      aria-expanded={mobileOpen}
-      onClick={() => setMobileOpen((o) => !o)}
-    ></button>
-  );
-
-  const nav = (
-    <nav
-      id="navbar"
-      className={mobileOpen ? "navbar navbar-mobile" : "navbar"}
-      aria-label="Primary navigation"
-      // Tapping the dimmed backdrop (the nav element itself) closes the drawer.
-      onClick={(e) => mobileOpen && e.target === e.currentTarget && close()}
-    >
-      <ul>
-        {MAIN_NAV.map((item) => (
-          <MenuItem key={item.label} item={item} activeHref={activeHref} mobile={mobileOpen} onNavigate={close} />
-        ))}
-      </ul>
-      {toggleButton}
-    </nav>
-  );
+  const onRegistration = pathname.startsWith("/registration");
 
   return (
-    <header id="header" className={scrolled ? "header fixed-top header-scrolled" : "header fixed-top"}>
-      <div className="container-fluid container-xl d-flex align-items-center justify-content-between">
-        <Link href="/" className="logo d-flex align-items-center" aria-label={`${SITE.name} home`}>
-          <SiteImage src={SITE.logo} alt={`${SITE.name} logo`} style={{ width: "auto" }} sizes="48px" />
-          <span>{SITE.shortName}</span>
+    <header className={`hq-chrome ${styles.header}`}>
+      <div className={styles.bar}>
+        <Link href="/" className={styles.brand} aria-label={`${SITE.name}, home`}>
+          <SiteImage src={SITE.logo} alt="" className={styles.logo} sizes="44px" loading="eager" />
+          <span className={styles.brandName}>
+            Hidayatul Quran <span className={styles.brandAcademy}>Academy</span>
+          </span>
         </Link>
-        {/* The open drawer is rendered into <body>: the header's backdrop-filter would otherwise
-            become the containing block of the fixed-position drawer. */}
-        {mobileOpen ? createPortal(nav, document.body) : nav}
-        {pathname !== "/registration" && (
-          <Link href="/registration" className="header-register">
-            Register Now
-          </Link>
-        )}
+
+        <nav aria-label="Main" className={styles.desktopNav}>
+          <ul className={styles.navList}>
+            {MAIN_NAV.map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} className={styles.navLink} aria-current={isCurrent(l.href, pathname) ? "page" : undefined}>
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className={styles.actions}>
+          {!onRegistration && (
+            <Link href="/registration" className={`hq-btn hq-btn--primary hq-btn--sm ${styles.register}`}>
+              Register
+            </Link>
+          )}
+          <button
+            ref={buttonRef}
+            type="button"
+            className={styles.menuButton}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            onClick={() => setOpen((o) => !o)}
+          >
+            <span className={styles.menuIcon} aria-hidden="true" data-open={open}>
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+            <span>{open ? "Close" : "Menu"}</span>
+          </button>
+        </div>
       </div>
+
+      <nav id="mobile-menu" aria-label="Main" className={styles.mobileNav} data-open={open}>
+        <ul className={styles.mobileList}>
+          {MAIN_NAV.map((l) => (
+            <li key={l.href}>
+              <Link
+                href={l.href}
+                className={styles.mobileLink}
+                aria-current={isCurrent(l.href, pathname) ? "page" : undefined}
+                onClick={() => setOpen(false)}
+              >
+                {l.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className={styles.mobileCtas}>
+          <Link href="/courses" className="hq-btn hq-btn--secondary hq-btn--block" onClick={() => setOpen(false)}>
+            Explore courses
+          </Link>
+          <Link href="/registration" className="hq-btn hq-btn--primary hq-btn--block" onClick={() => setOpen(false)}>
+            Register
+          </Link>
+        </div>
+      </nav>
     </header>
   );
 }

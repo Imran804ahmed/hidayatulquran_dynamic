@@ -1,4 +1,3 @@
-import Carousel from "@/components/ui/Carousel";
 import SiteImage from "@/components/ui/SiteImage";
 
 export default function PaymentsSection() {
@@ -65,22 +64,6 @@ export default function PaymentsSection() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div id="payment-methods-slider" className="clients" style={{ paddingTop: "50px" }}>
-        <div className="container" data-aos="fade-up">
-          <Carousel preset="clients" className="clients-slider" style={{ backgroundColor: "transparent" }}>
-            <div className="swiper-wrapper align-items-center">
-              <div className="swiper-slide">
-                <SiteImage src="/assets/img/clients/hidayatulquran_stripe.png" className="img-fluid" alt="Stripe payment method" />
-              </div>
-              <div className="swiper-slide"><SiteImage src="/assets/img/clients/hidayatulquran_wise.png" className="img-fluid" alt="Wise payment method" /></div>
-              <div className="swiper-slide">
-                <SiteImage src="/assets/img/clients/hidayatulquran_payoneer.png" className="img-fluid" alt="Payoneer payment method" />
-              </div>
-            </div>
-            <div className="swiper-pagination"></div>
-          </Carousel>
         </div>
       </div>
     </section>

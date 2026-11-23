@@ -3,7 +3,7 @@ export const SITE = {
   name: "HidayatulQuran Academy",
   shortName: "HidayatulQuran",
   url: "https://www.hidayatulquran.com",
-  logo: "/assets/img/hidayatulquran1.png",
+  logo: "/assets/img/hidayatulquran-logo.png",
   email: "info@hidayatulquran.com",
   phone: { pk: "+923365398542", uk: "+447376282389" },
   whatsappNumber: "923365398542",

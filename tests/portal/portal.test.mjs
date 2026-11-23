@@ -41,7 +41,7 @@ const post = (p, fields, headers = {}) => {
 };
 const reg = (email, extra = {}) => ({
   fullName: "Portal Test Child", age: "8", country: "uk", guardianName: "Test Parent", whatsappnumber: "+44 7700 900555",
-  email, course: "GoldPackage", classes: "5days", "selecteddays[]": ["mon", "tue"], selectedtime: "05:00 pm - 06:00 pm", message: "test", ...extra,
+  email, courseSlug: "quran-tajweed", course: "GoldPackage", classes: "5days", "selecteddays[]": ["mon", "tue"], selectedtime: "05:00 pm - 06:00 pm", message: "test", ...extra,
 });
 
 before(async () => {
@@ -72,7 +72,8 @@ test("registration form: stored before success, same JSON contract", async () =>
   const r = await post("/api/forms/registration", reg(mail("r1")));
   assert.equal(r.status, 200);
   assert.deepEqual(await r.json(), { success: true, message: "Your registration has been submitted. Thank you!" });
-  const [[row]] = await db.query("SELECT status, ref_no, preferred_days FROM hq_registrations WHERE email = ?", [mail("r1")]);
+  const [[row]] = await db.query("SELECT status, ref_no, preferred_days, message FROM hq_registrations WHERE email = ?", [mail("r1")]);
+  assert.equal(row.message, "Course: Quran with Tajweed\n\ntest");
   assert.equal(row.status, "new");
   assert.match(row.ref_no, /^REG-\d{5}$/);
   assert.equal(row.preferred_days, "mon,tue");
@@ -100,7 +101,11 @@ test("registration form: validation errors are reported, nothing stored", async 
   assert.equal(days.success, false);
   const badEmail = await (await post("/api/forms/registration", reg("not-an-email"))).json();
   assert.equal(badEmail.message, "Invalid email address.");
-  const [[{ c }]] = await db.query("SELECT COUNT(*) AS c FROM hq_registrations WHERE email IN (?, ?)", [mail("r3"), mail("r4")]);
+  const noCourse = await (await post("/api/forms/registration", reg(mail("r5"), { courseSlug: "" }))).json();
+  assert.deepEqual(noCourse, { success: false, message: "Please choose a course." });
+  const badCourse = await (await post("/api/forms/registration", reg(mail("r5"), { courseSlug: "not-a-course" }))).json();
+  assert.equal(badCourse.message, "Please choose a course.");
+  const [[{ c }]] = await db.query("SELECT COUNT(*) AS c FROM hq_registrations WHERE email IN (?, ?, ?)", [mail("r3"), mail("r4"), mail("r5")]);
   assert.equal(c, 0);
 });
 
@@ -197,7 +202,7 @@ test("portal responses are excluded from search indexing", async () => {
 
 const LEGACY_PAGES = {
   "index.html": "/", "about.html": "/about", "empowering-through-quranic-learning.html": "/empowering-through-quranic-learning",
-  "enrollment-process.html": "/enrollment-process", "Explore.html": "/explore", "faq.html": "/faq",
+  "enrollment-process.html": "/enrollment-process", "Explore.html": "/courses", "faq.html": "/faq",
   "noorani-qaida-online.html": "/noorani-qaida-online", "quran-reading-course-online.html": "/quran-reading-course-online",
   "quran-tajweed-course-online.html": "/quran-tajweed-course-online", "quran-memorization-hifz-online.html": "/quran-memorization-hifz-online",
   "tafseer-quran-course-online.html": "/tafseer-quran-course-online", "quranic-arabic-course-online.html": "/quranic-arabic-course-online",
@@ -214,6 +219,10 @@ test("old .html URLs redirect permanently (301) to the clean URLs", async () => 
     assert.equal(new URL(r.headers.get("location"), BASE).pathname, clean, `/${file} -> ${clean}`);
     assert.equal((await get(clean)).status, 200, `${clean} should be 200`);
   }
+  // The old course explorer became the course listing.
+  const explore = await get("/explore");
+  assert.equal(explore.status, 301);
+  assert.equal(new URL(explore.headers.get("location"), BASE).pathname, "/courses");
   for (const demo of ["/blog.html", "/inner-page.html", "/portfolio-details.html"]) assert.equal((await get(demo)).status, 301);
   assert.equal((await get("/robots.txt")).status, 200);
   const sitemap = await (await get("/sitemap.xml")).text();

@@ -10,7 +10,6 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // /explore is not blocked: it carries a noindex that crawlers must be able to read.
         disallow: ["/adminportal", "/api/"],
       },
     ],

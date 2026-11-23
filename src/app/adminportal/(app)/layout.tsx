@@ -53,7 +53,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <aside className="sidebar" id="sidebar" aria-label="Main navigation">
         <div className="sidebar-head">
           <Link className="brand" href={p("dashboard")} title="Dashboard">
-            <Image className="brand-logo" src="/assets/img/hidayatulquran1.png" alt="" width={46} height={46} />
+            <Image className="brand-logo" src="/assets/img/hidayatulquran-logo.png" alt="" width={46} height={46} />
             <span className="brand-text"><span className="brand-name">Hidayatul Quran</span><span className="brand-sub">Admin portal</span></span>
           </Link>
           <SidebarControls collapsed={collapsed} />

@@ -1,86 +1,92 @@
 import Link from "next/link";
 import { SITE, SOCIAL_LINKS, WHATSAPP_TRIAL } from "@/config/site";
+import { CATALOG } from "@/content/course-catalog";
+import SiteImage from "@/components/ui/SiteImage";
 import styles from "./SiteFooter.module.css";
 
-const COURSES = [
-  { label: "Noorani Qaida Online", href: "/noorani-qaida-online" },
-  { label: "Quran Reading Course", href: "/quran-reading-course-online" },
-  { label: "Quran with Tajweed", href: "/quran-tajweed-course-online" },
-  { label: "Quran Memorization (Hifz)", href: "/quran-memorization-hifz-online" },
-  { label: "Tafseer e Quran", href: "/tafseer-quran-course-online" },
-  { label: "Quranic Arabic Course", href: "/quranic-arabic-course-online" },
-];
-
 const QUICK_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "About Us", href: "/about" },
+  { label: "All courses", href: "/courses" },
+  { label: "Register", href: "/registration" },
+  { label: "Fees", href: "/#fees" },
+  { label: "How it works", href: "/enrollment-process" },
   { label: "FAQ", href: "/faq" },
-  { label: "Register Now", href: "/registration" },
-  { label: "Contact Us", href: "/#contact" },
-  { label: "Social Platforms", href: "/social-platforms" },
+  { label: "About us", href: "/about" },
+  { label: "Social platforms", href: "/social-platforms" },
 ];
-
-function LinkList({ links }: { links: { label: string; href: string }[] }) {
-  return (
-    <ul className={styles.list}>
-      {links.map((l) => (
-        <li key={l.href}>
-          <Link href={l.href}>{l.label}</Link>
-        </li>
-      ))}
-    </ul>
-  );
-}
 
 export default function SiteFooter() {
   return (
-    <footer id="footer" className={`footer ${styles.footer}`}>
-      <div className={styles.main}>
-        <div className="container">
-          <div className="row gy-4">
-            <div className="col-lg-3 col-md-6">
-              <h4 className={styles.heading}>{SITE.shortName}</h4>
-              <p className={styles.about}>
-                Online Quran Academy offering 1-on-1 live Quran classes with certified male and female tutors worldwide.
-              </p>
-              <div className={styles.social}>
-                {SOCIAL_LINKS.map((s) => (
-                  <a key={s.href} href={s.href} aria-label={s.label} target="_blank" rel="noopener noreferrer">
-                    <i className={`bi ${s.icon}`}></i>
-                  </a>
-                ))}
-                <a href={WHATSAPP_TRIAL} aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
-                  <i className="bi bi-whatsapp"></i>
+    <footer className={`hq-chrome hq-on-dark hq-band ${styles.footer}`}>
+      <div className={styles.inner}>
+        <div className={styles.brandCol}>
+          <Link href="/" className={styles.brand} aria-label={`${SITE.name}, home`}>
+            <span className={styles.logoWrap}>
+              <SiteImage src={SITE.logo} alt="" className={styles.logo} sizes="56px" />
+            </span>
+            <span className={styles.brandName}>Hidayatul Quran Academy</span>
+          </Link>
+          <p className={styles.about}>
+            Live one-to-one online Quran classes for kids and adults, with certified male and female tutors.
+          </p>
+          <ul className={styles.social} aria-label="Social media">
+            {SOCIAL_LINKS.map((s) => (
+              <li key={s.href}>
+                <a href={s.href} aria-label={s.label} target="_blank" rel="noopener noreferrer">
+                  <i className={`bi ${s.icon}`} aria-hidden="true"></i>
                 </a>
-              </div>
-            </div>
-            <div className="col-lg-3 col-md-6">
-              <h4 className={styles.heading}>Our Courses</h4>
-              <LinkList links={COURSES} />
-            </div>
-            <div className="col-lg-3 col-md-6">
-              <h4 className={styles.heading}>Quick Links</h4>
-              <LinkList links={QUICK_LINKS} />
-            </div>
-            <div className="col-lg-3 col-md-6">
-              <h4 className={styles.heading}>Contact</h4>
-              <p className={styles.contact}>
-                <i className="bi bi-telephone"></i>
-                <a href={`tel:${SITE.phone.pk}`}>+92 336 5398542</a>
-                <br />
-                <i className="bi bi-telephone"></i>
-                <a href={`tel:${SITE.phone.uk}`}>+44 7376282389</a>
-                <br />
-                <i className="bi bi-envelope"></i>
-                <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
-              </p>
-            </div>
-          </div>
+              </li>
+            ))}
+            <li>
+              <a href={WHATSAPP_TRIAL} aria-label="WhatsApp chat" target="_blank" rel="noopener noreferrer">
+                <i className="bi bi-whatsapp" aria-hidden="true"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <nav aria-labelledby="footer-courses">
+          <h2 id="footer-courses" className={styles.heading}>Courses</h2>
+          <ul className={styles.list}>
+            {CATALOG.map((c) => (
+              <li key={c.slug}>
+                <Link href={c.path}>{c.name}</Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <nav aria-labelledby="footer-links">
+          <h2 id="footer-links" className={styles.heading}>Quick links</h2>
+          <ul className={styles.list}>
+            {QUICK_LINKS.map((l) => (
+              <li key={l.href}>
+                <Link href={l.href}>{l.label}</Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div>
+          <h2 className={styles.heading}>Contact</h2>
+          <ul className={styles.list}>
+            <li>
+              <a href={`tel:${SITE.phone.pk}`}><i className="bi bi-telephone" aria-hidden="true"></i> +92 336 5398542</a>
+            </li>
+            <li>
+              <a href={`tel:${SITE.phone.uk}`}><i className="bi bi-telephone" aria-hidden="true"></i> +44 7376 282389</a>
+            </li>
+            <li>
+              <a href={`mailto:${SITE.email}`}><i className="bi bi-envelope" aria-hidden="true"></i> {SITE.email}</a>
+            </li>
+            <li>
+              <a href={WHATSAPP_TRIAL} target="_blank" rel="noopener noreferrer"><i className="bi bi-whatsapp" aria-hidden="true"></i> Chat on WhatsApp</a>
+            </li>
+          </ul>
         </div>
       </div>
       <div className={styles.bottom}>
         <p>
-          © {new Date().getFullYear()} <strong>{SITE.name}</strong>. All Rights Reserved.
+          © {new Date().getFullYear()} {SITE.name}. All rights reserved.
         </p>
       </div>
     </footer>

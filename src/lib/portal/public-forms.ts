@@ -6,6 +6,7 @@ import { getSettings } from "./settings";
 import { emailShell, escapeHtml, sendMail } from "./mailer";
 import { isRateLimited, recordRate } from "./request";
 import { DAYS, PLANS, countryName, daysLabel, digitsOnly, packageName } from "./lookups";
+import { courseBySlug } from "@/content/course-catalog";
 
 /*
  * Backend for the public website forms, replacing forms/contact.php and forms/registration.php.
@@ -64,12 +65,18 @@ export async function submitRegistration(fd: FormData): Promise<FormReply> {
   const pkg = s(fd, "course", 40);
   const plan = s(fd, "classes", 20);
   const time = s(fd, "selectedtime", 60);
-  const message = s(fd, "message", 5000);
+  const courseSlug = s(fd, "courseSlug", 60);
+  const message = s(fd, "message", 4800);
   const days = fd.getAll("selecteddays[]").concat(fd.getAll("selecteddays")).filter((d): d is string => typeof d === "string" && d in DAYS);
 
   if (!fullName || !ageRaw || !country || !whatsapp || !email || !pkg || !plan || !time) {
     return { success: false, message: "Please fill in all required fields." };
   }
+  // The course the visitor chose (website course slug = hq_courses.slug). There is no course column,
+  // so it is stored as the first line of the message, where the portal and the emails already show it.
+  const course = courseBySlug(courseSlug);
+  if (!course) return { success: false, message: "Please choose a course." };
+  const storedMessage = [`Course: ${course.name}`, message].filter(Boolean).join("\n\n");
   if (!isEmail(email)) return { success: false, message: "Invalid email address." };
   if (!/^\d{1,3}$/.test(ageRaw) || Number(ageRaw) < 1 || Number(ageRaw) > 120) return { success: false, message: "Please enter a valid age." };
   if (digitsOnly(whatsapp).length < 7) return { success: false, message: "Please enter a valid WhatsApp number, including the country code." };
@@ -96,7 +103,7 @@ export async function submitRegistration(fd: FormData): Promise<FormReply> {
       const newId = await db.insert("hq_registrations", {
         submission_key: key, source_form: "registration.html", full_name: fullName, age: Number(ageRaw), country,
         guardian_name: guardian || null, whatsapp, whatsapp_digits: digitsOnly(whatsapp), email, package: pkg, classes_plan: plan,
-        preferred_days: days.join(",") || null, preferred_time: time, message: message || null, status: "new",
+        preferred_days: days.join(",") || null, preferred_time: time, message: storedMessage, status: "new",
         confirmation_email: "skipped", submitted_at: now, updated_at: now,
       }, conn);
       await assignRef("hq_registrations", newId, conn);
@@ -112,7 +119,7 @@ export async function submitRegistration(fd: FormData): Promise<FormReply> {
 
   // Stored. Email problems are recorded but do not change the visitor's result.
   try {
-    const rows = { Course: packageName(pkg), Classes: PLANS[plan] ?? plan, "Selected Days": daysLabel(days.join(",")), "Preferred Time": time };
+    const rows = { Course: course.name, Package: packageName(pkg), Classes: PLANS[plan] ?? plan, "Selected Days": daysLabel(days.join(",")), "Preferred Time": time };
     if (settings.send_confirmations === "1") {
       await deliver("hq_registrations", id, () => sendMail(email, fullName, "Thank you for registering with Hidayatul Quran", emailShell(
         `<p>Dear ${escapeHtml(fullName)},</p><p>Thank you for registering with us. We have successfully received your registration details:</p>`,

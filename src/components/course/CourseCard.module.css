@@ -1,0 +1,223 @@
+/* Course card: white-to-cream card, artwork in the gold frame of the Environment gallery,
+   level badge on the artwork, gold rule under the title, icon rows, arrow "View course". */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 8px;
+  background: linear-gradient(180deg, #ffffff 0%, #fffaf0 100%);
+  border: 1px solid rgba(166, 111, 20, 0.22);
+  border-radius: 20px;
+  box-shadow: 0 14px 34px rgba(8, 44, 76, 0.1);
+  transition:
+    transform 0.35s var(--hq-ease),
+    box-shadow 0.35s var(--hq-ease),
+    border-color 0.35s ease;
+}
+
+.card:hover,
+.card:focus-within {
+  transform: translateY(-6px);
+  border-color: rgba(166, 111, 20, 0.6);
+  box-shadow: 0 24px 46px rgba(8, 44, 76, 0.18);
+}
+
+/* ---------- Artwork ---------- */
+.frame {
+  position: relative;
+  padding: 6px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ffffff 0%, #f7ecd3 100%);
+  border: 1px solid rgba(166, 111, 20, 0.2);
+}
+
+/* Same ratio as the course artwork (1816 x 1259), so the whole picture shows, uncropped. */
+.media {
+  aspect-ratio: 1816 / 1259;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.5s var(--hq-ease);
+}
+
+.card:hover .image,
+.card:focus-within .image {
+  transform: scale(1.04);
+}
+
+/* Level badge on the artwork: gold on navy (7.2:1). */
+.level {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--hq-c-dark);
+  color: var(--hq-c-champagne);
+  font-family: var(--hq-font-label);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  box-shadow: 0 6px 14px rgba(8, 44, 76, 0.25);
+}
+
+.level i { font-size: 0.75rem; }
+
+/* ---------- Text ---------- */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 14px 12px;
+  flex: 1;
+}
+
+.title {
+  font-family: var(--hq-font-head);
+  font-size: 1.3125rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.titleLink {
+  color: var(--hq-c-dark);
+  text-decoration: none;
+  transition: color var(--hq-dur-fast) ease;
+}
+
+.card:hover .titleLink { color: var(--hq-c-gold-text); }
+
+/* The title link's clickable area covers the whole card (its own focus ring stays on the text). */
+.titleLink::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 20px;
+}
+
+/* Square-dot rule, as in the section labels. */
+.rule {
+  display: block;
+  width: 54px;
+  height: 5px;
+  background: repeating-linear-gradient(90deg, var(--hq-c-gold) 0 5px, transparent 5px 10px);
+}
+
+.summary {
+  margin: 0;
+  color: var(--hq-c-muted);
+}
+
+.meta {
+  display: grid;
+  gap: 10px;
+  margin: 6px 0 0;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(247, 236, 211, 0.45);
+  font-size: 0.9375rem;
+}
+
+.meta div {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 8px;
+  align-items: start;
+}
+
+.meta dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--hq-c-dark);
+}
+
+.metaIcon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--hq-c-gold-text);
+  box-shadow: 0 2px 6px rgba(8, 44, 76, 0.08);
+  font-size: 0.875rem;
+}
+
+.meta dd {
+  margin: 0;
+  color: var(--hq-c-ink);
+  padding-top: 2px;
+}
+
+/* ---------- Footer ---------- */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(166, 111, 20, 0.35);
+}
+
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--hq-font-label);
+  font-weight: 700;
+  color: var(--hq-c-dark);
+}
+
+.moreIcon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--hq-c-gold);
+  color: var(--hq-c-gold-text);
+  transition: background-color var(--hq-dur) var(--hq-ease), color var(--hq-dur) var(--hq-ease), transform var(--hq-dur) var(--hq-ease);
+}
+
+.card:hover .moreIcon,
+.card:focus-within .moreIcon {
+  background: var(--hq-c-gold-text);
+  border-color: var(--hq-c-gold-text);
+  color: #fff;
+  transform: translateX(4px);
+}
+
+/* Sits above the card-wide title link so it stays clickable on its own. */
+.register {
+  position: relative;
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card:hover,
+  .card:focus-within,
+  .card:hover .image,
+  .card:focus-within .image,
+  .card:hover .moreIcon,
+  .card:focus-within .moreIcon {
+    transform: none;
+  }
+}

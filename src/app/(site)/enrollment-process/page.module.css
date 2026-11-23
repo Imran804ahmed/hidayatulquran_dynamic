@@ -1,144 +1,179 @@
-/* Styles for src/app/(site)/enrollment-process/page.tsx. Scoped to the element with
-   className={styles.page}; :where() keeps the original selector specificity. */
+/* Enrollment process ("How it works") page, built on the shared design system in design.css. */
 
-:where(.page) :global(.ep-step-card) {
-  background: #fff;
-  border-radius: 16px;
-  padding: 36px 30px;
-  box-shadow: 0 6px 30px rgba(8, 44, 76, 0.09);
-  border-top: 5px solid #E1B152;
-  height: 100%;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.head { padding: 40px 0 56px; overflow: hidden; }
+
+@media (min-width: 992px) {
+  .head { padding: 56px 0 72px; }
 }
 
-:where(.page) :global(.ep-step-card:hover) {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 45px rgba(8, 44, 76, 0.15);
-}
-
-:where(.page) :global(.ep-step-number) {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #E1B152 0%, #c9822a 100%);
-  color: #fff;
-  font-size: 22px;
-  font-weight: 800;
-  display: flex;
+.headGrid {
+  display: grid;
+  gap: 32px;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 18px;
-  box-shadow: 0 6px 18px rgba(225, 177, 82, 0.45);
 }
 
-:where(.page) :global(.ep-step-card h3) {
-  color: #082c4c;
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 12px;
+@media (min-width: 992px) {
+  .headGrid { grid-template-columns: 1.1fr 1fr; gap: 56px; }
 }
 
-:where(.page) :global(.ep-step-card p) {
-  color: #555;
-  font-size: 15.5px;
-  line-height: 1.75;
-  margin-bottom: 14px;
+.lead { max-width: 60ch; }
+
+.para {
+  margin: 14px 0 0;
+  font-size: 1.0625rem;
+  max-width: 64ch;
 }
 
-:where(.page) :global(.ep-step-card ul) {
-  padding-left: 0;
+.ctas { margin-top: 24px; }
+
+/* Images keep their own 3:2 ratio, so nothing is cropped. */
+.headArt,
+.demoArt {
+  border-radius: var(--hq-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--hq-shadow);
+  background: #fff;
+}
+
+.headImage,
+.demoImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------- Steps ---------- */
+.steps {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   list-style: none;
   margin: 0;
+  padding: 0;
 }
 
-:where(.page) :global(.ep-step-card ul li) {
-  color: #444;
-  font-size: 15px;
-  padding: 6px 0;
-  border-bottom: 1px dashed #e8e8e8;
+.step {
   display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-:where(.page) :global(.ep-step-card ul li:last-child) {
-  border-bottom: none;
-}
-
-:where(.page) :global(.ep-step-card ul li i) {
-  color: #25D366;
-  font-size: 16px;
-  flex-shrink: 0;
-}
-
-:where(.page) :global(.ep-connector) {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: 28px;
-}
-
-:where(.page) :global(.ep-connector i) {
-  font-size: 30px;
-  color: #E1B152;
-}
-
-:where(.page) :global(.ep-highlight-box) {
-  background: linear-gradient(135deg, #082c4c 0%, #0a3d1e 100%);
-  border-radius: 20px;
-  padding: 48px 36px;
-  color: #fff;
-  text-align: center;
-}
-
-:where(.page) :global(.ep-highlight-box h2) {
-  color: #E1B152;
-  font-size: 26px;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-
-:where(.page) :global(.ep-highlight-box p) {
-  color: rgba(255,255,255,0.85);
-  font-size: 16px;
-  max-width: 620px;
-  margin: 0 auto 28px;
-}
-
-:where(.page) :global(.ep-faq-item) {
+  flex-direction: column;
+  padding: 26px 24px;
   background: #fff;
-  border-radius: 12px;
-  padding: 22px 26px;
+  border: 1px solid var(--hq-c-border);
+  border-top: 4px solid var(--hq-c-gold);
+  border-radius: var(--hq-radius);
+  box-shadow: var(--hq-shadow-sm);
+}
+
+.stepTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 16px;
-  box-shadow: 0 3px 16px rgba(8, 44, 76, 0.07);
-  border-left: 4px solid #E1B152;
 }
 
-:where(.page) :global(.ep-faq-item h4) {
-  color: #082c4c;
-  font-size: 16px;
+.stepNum {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--hq-c-dark);
+  color: var(--hq-c-champagne);
+  font-family: var(--hq-font-label);
+  font-weight: 800;
+  font-size: 1.125rem;
+}
+
+.stepIcon {
+  font-size: 1.75rem;
+  color: var(--hq-c-primary);
+}
+
+.stepTitle {
+  font-family: var(--hq-font-head);
+  font-size: 1.25rem;
   font-weight: 700;
-  margin-bottom: 8px;
+  color: var(--hq-c-dark);
+  margin: 0 0 8px;
 }
 
-:where(.page) :global(.ep-faq-item p) {
-  color: #555;
-  font-size: 15px;
-  margin: 0;
-  line-height: 1.7;
+.stepText {
+  margin: 0 0 16px;
+  color: var(--hq-c-muted);
 }
 
-@media (max-width: 767px) {
-  :where(.page) :global(.ep-connector) {
-    display: none;
-  }
+.stepList {
+  margin-top: auto;
+  font-size: 0.9375rem;
+}
 
-  :where(.page) :global(.ep-step-card) {
-    margin-bottom: 24px;
-  }
+/* ---------- Demo class ---------- */
+.demo {
+  display: grid;
+  gap: 32px;
+  align-items: center;
+}
 
-  :where(.page) :global(.ep-highlight-box) {
-    padding: 32px 20px;
-  }
+@media (min-width: 992px) {
+  .demo { grid-template-columns: 1fr 1.1fr; gap: 56px; }
+}
 
+.demo :global(.hq-h2) { margin-bottom: 4px; }
+
+.demoPoints {
+  margin-top: 22px;
+  grid-template-columns: 1fr;
+  font-weight: 600;
+  color: var(--hq-c-dark);
+}
+
+@media (min-width: 560px) {
+  .demoPoints { grid-template-columns: 1fr 1fr; column-gap: 20px; }
+}
+
+/* ---------- Common questions ---------- */
+.questions { max-width: 880px; }
+
+.more {
+  margin: 20px 0 0;
+  color: var(--hq-c-muted);
+}
+
+/* ---------- Courses ---------- */
+.coursesBlock { text-align: center; }
+
+.courseLinks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+}
+
+.courseLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 18px;
+  border: 1px solid rgba(225, 177, 82, 0.55);
+  border-radius: 999px;
+  color: var(--hq-c-on-dark);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color var(--hq-dur-fast) ease, color var(--hq-dur-fast) ease;
+}
+
+.courseLink:hover {
+  background: var(--hq-c-champagne);
+  color: var(--hq-c-dark);
+}
+
+.courseLink i { color: var(--hq-c-champagne); }
+.courseLink:hover i { color: var(--hq-c-dark); }
+
+.coursesCtas {
+  justify-content: center;
+  margin-top: 32px;
 }

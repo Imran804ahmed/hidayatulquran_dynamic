@@ -4,6 +4,7 @@ type SitemapEntry = { path: string; priority: number; changeFrequency: "weekly" 
 /** Public, indexable pages. Used by app/sitemap.ts; add new public pages here. */
 export const PUBLIC_PAGES: SitemapEntry[] = [
   { path: "/", priority: 1.0, changeFrequency: "weekly" },
+  { path: "/courses", priority: 0.9, changeFrequency: "monthly" },
   { path: "/noorani-qaida-online", priority: 0.9, changeFrequency: "monthly" },
   { path: "/quran-reading-course-online", priority: 0.9, changeFrequency: "monthly" },
   { path: "/quran-tajweed-course-online", priority: 0.9, changeFrequency: "monthly" },
@@ -32,5 +33,5 @@ export const PUBLIC_PAGES: SitemapEntry[] = [
 ];
 
 /** Date the content (or URL) of the public pages last changed. Update when publishing changes. */
-export const CONTENT_LAST_MODIFIED = "2026-11-17";
+export const CONTENT_LAST_MODIFIED = "2026-11-19";
 

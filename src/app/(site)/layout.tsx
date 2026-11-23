@@ -5,6 +5,7 @@ import "remixicon/fonts/remixicon.css";
 import "aos/dist/aos.css";
 import "swiper/swiper-bundle.min.css";
 import "@/styles/site.css";
+import "@/styles/design.css";
 import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import FloatingActions from "@/components/layout/FloatingActions";
@@ -28,6 +29,10 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
     // before React hydrates. It only ignores attribute differences on these two elements.
     <html lang="en" className={fontVariables} suppressHydrationWarning>
       <body suppressHydrationWarning>
+        {/* Without JavaScript, AOS never runs: show the content its CSS hides until animated. */}
+        <noscript>
+          <style>{"[data-aos]{opacity:1!important;transform:none!important}"}</style>
+        </noscript>
         <a href="#main" className="skip-link">
           Skip to main content
         </a>

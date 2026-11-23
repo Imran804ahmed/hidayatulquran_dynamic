@@ -1,0 +1,33 @@
+/* FAQ page (src/app/(site)/faq/page.tsx), built on the shared design system in design.css. */
+
+.head { padding: 40px 0 48px; }
+
+@media (min-width: 992px) {
+  .head { padding: 56px 0 64px; }
+}
+
+.lead { max-width: 60ch; }
+
+.columns {
+  display: grid;
+  gap: 40px;
+  align-items: start;
+}
+
+@media (min-width: 992px) {
+  .columns { grid-template-columns: 1fr 1fr; gap: 32px; }
+}
+
+.groupTitle { margin-bottom: 16px; }
+
+.help {
+  max-width: 760px;
+  text-align: center;
+}
+
+.help :global(.hq-lead) { margin-left: auto; margin-right: auto; }
+
+.helpButtons {
+  justify-content: center;
+  margin-top: 28px;
+}

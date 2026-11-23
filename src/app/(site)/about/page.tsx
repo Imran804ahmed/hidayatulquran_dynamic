@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { pageMetadata } from "@/lib/seo";
 import JsonLd from "@/components/seo/JsonLd";
-import styles from "./page.module.css";
 import SiteImage from "@/components/ui/SiteImage";
+import { SITE, WHATSAPP_TRIAL } from "@/config/site";
+import { Reveal, RevealGroup } from "@/components/motion/Reveal";
+import styles from "./page.module.css";
 
 export const metadata = pageMetadata({
   path: "/about",
@@ -12,9 +14,20 @@ export const metadata = pageMetadata({
   twitterDescription: "Certified male and female Quran tutors offering live 1-on-1 online Quran classes for kids and adults in USA, UK, Canada and worldwide.",
 });
 
+const REASONS = [
+  { icon: "bi-patch-check", title: "Certified Quran teachers", text: "Our tutors are Hafiz-e-Quran and Tajweed-certified with years of professional teaching experience." },
+  { icon: "bi-person-lines-fill", title: "One-to-one live classes", text: "Personalised 1-on-1 sessions ensure better understanding and faster progress for every student." },
+  { icon: "bi-book", title: "Learn Quran with Tajweed", text: "Focus on correct Makharij (pronunciation) and proper Tajweed rules to perfect your recitation." },
+  { icon: "bi-people", title: "Courses for all ages", text: "Programs for kids, adults, and new Muslims — Quran reading, Tajweed, Hifz, Tafseer, and Arabic." },
+  { icon: "bi-clock", title: "Flexible timings", text: "Classes available across USA, UK, Canada, UAE, and all major time zones — at your convenience." },
+  { icon: "bi-graph-up", title: "Progress tracking", text: "Regular assessments, feedback, and monthly reports ensure continuous and measurable improvement." },
+];
+
+const VALUES = ["Accessibility", "Quality education", "Patience with every learner", "Global reach"];
+
 export default function Page() {
   return (
-    <>
+    <div className="hq-page">
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "AboutPage",
@@ -24,171 +37,104 @@ export default function Page() {
         "breadcrumb": {
           "@type": "BreadcrumbList",
           "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "Home",
-              "item": "https://www.hidayatulquran.com/"
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "About",
-              "item": "https://www.hidayatulquran.com/about"
-            }
-          ]
-        }
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.hidayatulquran.com/" },
+            { "@type": "ListItem", "position": 2, "name": "About", "item": "https://www.hidayatulquran.com/about" },
+          ],
+        },
       }} />
-      <main id="main" className={styles.page}>
-        <section className="about-hero" style={{ marginTop: "70px" }}>
-          <div className="container">
-            <h1 data-aos="fade-down">About HidayatulQuran Academy</h1>
-            <p data-aos="fade-up" data-aos-delay="100">
-              A trusted online Quran academy connecting students worldwide with certified, experienced tutors — one class at a time.
+      <main id="main">
+        <section className={`hq-section hq-section--sand ${styles.head}`} aria-labelledby="page-heading">
+          <div className="hq-container hq-enter">
+            <nav aria-label="Breadcrumb" className="hq-breadcrumb">
+              <ol>
+                <li><Link href="/">Home</Link></li>
+                <li aria-current="page">About</li>
+              </ol>
+            </nav>
+            <p className="hq-eyebrow">About us</p>
+            <h1 id="page-heading" className="hq-h1">About Hidayatul Quran Academy</h1>
+            <p className={`hq-lead ${styles.lead}`}>
+              Connecting students worldwide with certified, experienced Quran tutors — one class at a time.
             </p>
           </div>
         </section>
-        <section className="about-story">
-          <div className="container">
-            <div className="row align-items-center g-5">
-              <div className="col-lg-7" data-aos="fade-right">
-                <p className="section-label">Who We Are</p>
-                <h2>Hidaya Tul Quran — Online Quran Academy</h2>
-                <p className="lead-text">
-                  <strong>Hidaya-tul-Quran Academy</strong>
-                  {" "}is a trusted{" "}
-                  <strong>online Quran academy</strong>
-                  {" "}providing professional Quran learning services for students worldwide. Whether you are searching for a{" "}
-                  <strong>Quran teacher online</strong>
-                  {" "}or want to{" "}
-                  <strong>learn Quran with Tajweed</strong>
-                  {" "}from the comfort of your home, we offer structured and personalised learning programs for all ages.
-                </p>
-                <p className="lead-text">
-                  Our academy connects students with experienced, qualified Quran tutors through live 1-on-1 online classes. Whether you are a complete beginner or looking to refine your recitation, we help you achieve fluency in reading the Holy Quran with proper pronunciation and Tajweed rules.
-                </p>
-                <div className="d-flex flex-wrap gap-3 mt-4">
-                  <Link href="/registration" className="btn-wa" style={{ background: "#082c4c", boxShadow: "0 4px 20px rgba(8,44,76,0.3)" }}>
-                    <i className="bi bi-pencil-square"></i>
-                    {" "}Register Now
-                  </Link>
-                  {" "}
-                  <a href="https://wa.me/923365398542?text=Assalamu%20Alaikum%2C%20I%20want%20to%20book%20a%20free%20trial%20Quran%20class." target="_blank" rel="noopener noreferrer" className="btn-wa">
-                    <i className="bi bi-whatsapp" style={{ fontSize: "1.1rem" }}></i>
-                    {" "}Free Trial Class
-                  </a>
-                </div>
+
+        <section className="hq-section" aria-labelledby="story-heading">
+          <div className={`hq-container ${styles.story}`}>
+            <div>
+              <p className="hq-eyebrow">Who we are</p>
+              <h2 id="story-heading" className="hq-h2">A Quran teacher for every student</h2>
+              <p className={styles.para}>
+                <strong>Hidayatul Quran Academy</strong> is a trusted <strong>online Quran academy</strong> for students
+                around the world. Whether you need a <strong>Quran teacher online</strong> for your child or want to{" "}
+                <strong>learn Quran with Tajweed</strong> yourself, we offer structured programs from the comfort of your home.
+              </p>
+              <p className={styles.para}>
+                Complete beginners start from the basics, while experienced readers polish their recitation — each student
+                progressing at their own pace towards fluent, confident reading of the Holy Quran.
+              </p>
+              <div className={`hq-btn-row ${styles.ctas}`}>
+                <Link href="/registration" className="hq-btn hq-btn--primary">Register for a free trial</Link>
+                <Link href="/courses" className="hq-btn hq-btn--secondary">Explore courses</Link>
               </div>
-              <div className="col-lg-5" data-aos="fade-left" data-aos-delay="100">
-                <div className="logo-card">
-                  <SiteImage src="/assets/img/hidayatulquran1.png" alt="HidayatulQuran Academy Logo" sizes="130px" />
-                  <div className="divider"></div>
-                  <h3>HidayatulQuran</h3>
-                  <p>
-                    Online Quran Academy
-                    <br />
-                    Serving students worldwide since day one
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section className="why-section">
-          <div className="container">
-            <div className="text-center" data-aos="fade-up">
-              <p className="section-label">Our Advantages</p>
-              <h2>Why Choose Our Online Quran Academy?</h2>
-              <p className="subtitle">
-                We combine qualified teaching, flexible scheduling, and personalised attention to make Quran learning effective for everyone.
+              <p className={styles.alt}>
+                Prefer to talk first?{" "}
+                <a href={WHATSAPP_TRIAL} target="_blank" rel="noopener noreferrer">
+                  Message us on WhatsApp<span className="hq-visually-hidden"> (opens in a new tab)</span>
+                </a>
               </p>
             </div>
-            <div className="row g-4">
-              <div className="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
-                <div className="feature-card">
-                  <div className="icon-wrap"><i className="bi bi-patch-check-fill"></i></div>
-                  <h4>Certified Quran Teachers</h4>
-                  <p>Our tutors are Hafiz-e-Quran and Tajweed-certified with years of professional teaching experience.</p>
-                </div>
-              </div>
-              <div className="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="150">
-                <div className="feature-card">
-                  <div className="icon-wrap"><i className="bi bi-person-lines-fill"></i></div>
-                  <h4>One-to-One Live Classes</h4>
-                  <p>Personalised 1-on-1 sessions ensure better understanding and faster progress for every student.</p>
-                </div>
-              </div>
-              <div className="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
-                <div className="feature-card">
-                  <div className="icon-wrap"><i className="bi bi-book-fill"></i></div>
-                  <h4>Learn Quran with Tajweed</h4>
-                  <p>Focus on correct Makharij (pronunciation) and proper Tajweed rules to perfect your recitation.</p>
-                </div>
-              </div>
-              <div className="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="250">
-                <div className="feature-card">
-                  <div className="icon-wrap"><i className="bi bi-people-fill"></i></div>
-                  <h4>Courses for All Ages</h4>
-                  <p>Programs for kids, adults, and new Muslims — Quran reading, Tajweed, Hifz, Tafseer, and Arabic.</p>
-                </div>
-              </div>
-              <div className="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
-                <div className="feature-card">
-                  <div className="icon-wrap"><i className="bi bi-clock-fill"></i></div>
-                  <h4>Flexible Timings</h4>
-                  <p>Classes available across USA, UK, Canada, UAE, and all major time zones — at your convenience.</p>
-                </div>
-              </div>
-              <div className="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="350">
-                <div className="feature-card">
-                  <div className="icon-wrap"><i className="bi bi-graph-up"></i></div>
-                  <h4>Progress Tracking</h4>
-                  <p>Regular assessments, feedback, and monthly reports ensure continuous and measurable improvement.</p>
-                </div>
-              </div>
-            </div>
+            <figure className={styles.logoFigure}>
+              <SiteImage src={SITE.logo} alt="Hidayatul Quran Academy logo" className={styles.logo} sizes="(max-width: 900px) 240px, 340px" />
+              <figcaption className={styles.caption}>
+                <span className={styles.captionName}>Hidayatul Quran Academy</span>
+              </figcaption>
+            </figure>
           </div>
         </section>
-        <section className="mission-section">
-          <div className="container" data-aos="fade-up">
-            <div className="mission-card">
-              <p className="section-label">Our Purpose</p>
-              <h2>Our Mission</h2>
-              <p>
-                Our mission is to make{" "}
-                <strong style={{ color: "#E1B152" }}>Quran learning online</strong>
-                {" "}accessible, easy, and effective for students around the world. We aim to provide high-quality Islamic education that helps individuals understand and recite the Holy Quran correctly with Tajweed — empowering every Muslim to build a stronger connection with the Book of Allah from the comfort of their home.
+
+        <section className="hq-section hq-section--sand" aria-labelledby="why-heading">
+          <div className="hq-container">
+            <Reveal className="hq-section-head">
+              <p className="hq-eyebrow">Our advantages</p>
+              <h2 id="why-heading" className="hq-h2">Why students choose us</h2>
+              <p className="hq-lead">
+                Six things every family can expect from their very first class.
               </p>
-              <div className="mission-values">
-                <span>
-                  <i className="bi bi-check-circle me-1"></i>
-                  Accessibility
-                </span>
-                {" "}
-                <span>
-                  <i className="bi bi-check-circle me-1"></i>
-                  Quality Education
-                </span>
-                {" "}
-                <span>
-                  <i className="bi bi-check-circle me-1"></i>
-                  Certified Tutors
-                </span>
-                {" "}
-                <span>
-                  <i className="bi bi-check-circle me-1"></i>
-                  Global Reach
-                </span>
-                {" "}
-                <span>
-                  <i className="bi bi-check-circle me-1"></i>
-                  Free Trial Class
-                </span>
-              </div>
-            </div>
+            </Reveal>
+            <RevealGroup className={styles.reasons}>
+              {REASONS.map((r) => (
+                <li key={r.title} className={styles.reason}>
+                  <span className={styles.icon} aria-hidden="true"><i className={`bi ${r.icon}`}></i></span>
+                  <h3 className={styles.reasonTitle}>{r.title}</h3>
+                  <p className={styles.reasonText}>{r.text}</p>
+                </li>
+              ))}
+            </RevealGroup>
           </div>
+        </section>
+
+        <section className="hq-section hq-section--dark hq-band" aria-labelledby="mission-heading">
+          <Reveal className={`hq-container ${styles.mission}`}>
+            <p className="hq-eyebrow">Our purpose</p>
+            <h2 id="mission-heading" className="hq-h2">Our mission</h2>
+            <p className={`hq-lead ${styles.missionText}`}>
+              To make <strong className={styles.highlight}>Quran learning online</strong> accessible, easy and effective
+              for everyone — helping every Muslim understand the Holy Quran, recite it correctly and build a lasting
+              connection with the Book of Allah.
+            </p>
+            <ul className={styles.values} aria-label="Our values">
+              {VALUES.map((v) => (
+                <li key={v}><i className="bi bi-check2" aria-hidden="true"></i> {v}</li>
+              ))}
+            </ul>
+            <div className={`hq-btn-row ${styles.missionCtas}`}>
+              <Link href="/registration" className="hq-btn hq-btn--gold">Register now</Link>
+              <Link href="/courses" className="hq-btn hq-btn--ghost-light">Explore courses</Link>
+            </div>
+          </Reveal>
         </section>
       </main>
-    </>
+    </div>
   );
 }
